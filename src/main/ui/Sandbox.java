@@ -1,7 +1,6 @@
 package ui;
 
 import model.Game;
-import model.exceptions.EndProgramException;
 
 // Sandbox application
 public class Sandbox {
@@ -12,7 +11,7 @@ public class Sandbox {
     private Input in;
 
     // EFFECTS: starts new sandbox instance
-    public Sandbox() throws EndProgramException {
+    public Sandbox() {
         game = new Game();
 
         in = new Input();
@@ -23,7 +22,7 @@ public class Sandbox {
 
     // MODIFIES: this
     // EFFECTS: processes user input
-    private void runSandbox() throws EndProgramException {
+    private void runSandbox() {
         while (true) {
             try {
                 Thread.sleep(UPDATE_INTERVAL);
@@ -53,6 +52,8 @@ public class Sandbox {
             game.relaunchCircles();
         } else if (input.equals("d")) {
             game.deleteCircles();
+        } else if (input.equals("f")) {
+            System.exit(0);
         }
     }
 

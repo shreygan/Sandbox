@@ -1,7 +1,5 @@
 package ui;
 
-import model.exceptions.EndProgramException;
-
 import java.util.Scanner;
 
 // Handles user input
@@ -44,12 +42,12 @@ public class Input extends Thread {
 
     // MODIFIES: this
     // EFFECTS: returns what the user inputted
-    public String getNextIn() throws EndProgramException {
+    public String getNextIn() {
         String temp = nextIn;
         nextIn = "";
 
         if (temp.equals("f")) {
-            throw new EndProgramException();
+            interrupt();
         }
 
         return temp;
