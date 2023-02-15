@@ -76,6 +76,13 @@ class GameTest {
     }
 
     @Test
+    public void testGetOutputEmpty() {
+        game = new Game();
+
+        assertEquals("", game.getOutput());
+    }
+
+    @Test
     public void testGetOutputNotRunning() {
         game.setRunning(false);
 
