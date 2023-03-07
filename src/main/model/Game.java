@@ -120,6 +120,27 @@ public class Game implements Writeable {
         c.updateYVel();
     }
 
+    // EFFECTS: returns JSONObject representing all data of this
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("sandbox", 0);
+        json.put("circles", circlesToJson());
+
+        return json;
+    }
+
+    // EFFECTS: returns JSONArray of all circles in this
+    private JSONArray circlesToJson() {
+        JSONArray jsonArr = new JSONArray();
+
+        for (Circle c : circles) {
+            jsonArr.put(c.toJson());
+        }
+
+        return jsonArr;
+    }
 
     public boolean isRunning() {
         return isRunning;
@@ -131,25 +152,5 @@ public class Game implements Writeable {
 
     public ArrayList<Circle> getCircles() {
         return circles;
-    }
-
-    @Override
-    public JSONObject toJson() {
-        JSONObject json = new JSONObject();
-
-        json.put("sandbox", 0);
-        json.put("circles", circlesToJson());
-
-        return json;
-    }
-
-    private JSONArray circlesToJson() {
-        JSONArray jsonArr = new JSONArray();
-
-        for (Circle c : circles) {
-            jsonArr.put(c.toJson());
-        }
-
-        return jsonArr;
     }
 }

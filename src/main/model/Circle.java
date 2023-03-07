@@ -118,6 +118,7 @@ public class Circle implements Writeable {
         this.xvel *= BOUNCE_COEFFICENT;
     }
 
+    // EFFECTS: returns JSONObject representing all data of this
     @Override
     public JSONObject toJson() {
         JSONObject json = new JSONObject();

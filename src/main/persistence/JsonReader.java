@@ -10,16 +10,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+// a readers that reads and converts JSON representations of Game to Game objects
 public class JsonReader {
     private String source;
 
+    // EFFECTS: initializes new json reader with given source
     public JsonReader(String source) {
         this.source = source;
     }
 
+    // EFFECTS: reads json file at source and returns as Game
+    // throwns IOException if an error occurs during reading data
     public Game read() throws IOException {
-//        JSONObject js = parser
-
         InputStream is = new FileInputStream(source);
         JSONTokener tokener = new JSONTokener(is);
         JSONObject json = new JSONObject(tokener);
@@ -31,6 +33,9 @@ public class JsonReader {
         return g;
     }
 
+    // REQUIRES: given JSONObject must contain JSONArray w/ key circles
+    // MODIFIES: g
+    // EFFECTS: parses given JSONObject as game
     private void makeGame(Game g, JSONObject json) {
         for (Object obj : json.getJSONArray("circles")) {
             JSONObject next = (JSONObject) obj;
@@ -38,6 +43,10 @@ public class JsonReader {
         }
     }
 
+    // REQUIRES: given JSONObject must be storing a circle w/
+    //           the corresponding keys
+    // MODIFIES: g
+    // EFFECTS: parses given JSONObject as circle and adds to game
     private void addCircle(Game g, JSONObject json) {
         int xpos = json.getInt("xpos");
         int ypos = json.getInt("ypos");
