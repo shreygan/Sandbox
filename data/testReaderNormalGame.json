@@ -1,0 +1,32 @@
+{
+  "sandbox": 0,
+  "circles": [
+    {
+      "ypos": 407,
+      "xpos": 395,
+      "color": -9962195,
+      "id": 1,
+      "yvel": 25,
+      "xvel": 6,
+      "diam": 65
+    },
+    {
+      "ypos": 125,
+      "xpos": 98,
+      "color": -371919,
+      "id": 2,
+      "yvel": 17,
+      "xvel": -3,
+      "diam": 56
+    },
+    {
+      "ypos": 28,
+      "xpos": 164,
+      "color": -10879299,
+      "id": 3,
+      "yvel": -5,
+      "xvel": 3,
+      "diam": 35
+    }
+  ]
+}

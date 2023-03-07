@@ -1,11 +1,20 @@
 package ui;
 
 import model.Game;
+import persistence.JsonReader;
+import persistence.JsonWriter;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 // Sandbox application
 public class Sandbox {
 
     private static final int UPDATE_INTERVAL = 1000;
+
+    private static final String JSON_LOCATION = "./data/game.json";
+    private JsonReader reader;
+    private JsonWriter writer;
 
     private Game game;
     private Input in;
@@ -13,6 +22,9 @@ public class Sandbox {
     // EFFECTS: starts new sandbox instance
     public Sandbox() {
         game = new Game();
+
+        reader = new JsonReader(JSON_LOCATION);
+        writer = new JsonWriter(JSON_LOCATION);
 
         in = new Input();
         in.start();
@@ -52,9 +64,33 @@ public class Sandbox {
             game.relaunchCircles();
         } else if (input.equals("d")) {
             game.deleteCircles();
+        } else if (input.equals("s")) {
+            saveGame();
+        } else if (input.equals("l")) {
+            loadGame();
         } else if (input.equals("f")) {
             System.exit(0);
         }
     }
 
+    private void saveGame() {
+        try {
+            writer.open();
+            writer.write(game);
+            writer.close();
+            System.out.println("Saved to " + JSON_LOCATION);
+        } catch (FileNotFoundException e) {
+            System.out.println("Error in writing to given file: " + JSON_LOCATION);
+            e.printStackTrace();
+        }
+    }
+
+    private void loadGame() {
+        try {
+            game = reader.read();
+            System.out.println("Loaded from " + JSON_LOCATION);
+        } catch (IOException e) {
+            System.out.println("Error in reading from given file: " + JSON_LOCATION);
+        }
+    }
 }

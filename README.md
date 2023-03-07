@@ -34,3 +34,7 @@ with the program.
 - As a user, I want the circles to initially move in random directions, but still fall with gravity and bounce off all the boundaries of the sandbox
 - As a user, I want to be able to pause and play the simulation
 - As a user, I want to be able to delete all circles in the sandbox, or relaunch all of them again in random directions
+
+
+- As a user, I want to be able to save the current state of the sandbox
+- As a user, I want to be able to load a sandbox from a file

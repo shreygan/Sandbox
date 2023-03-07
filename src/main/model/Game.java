@@ -1,11 +1,15 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writeable;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
 // Represents the sandbox game with all it's circles
-public class Game {
+public class Game implements Writeable {
 
     public static final int STEPS_PER_UPDATE = 5;
     public static final int WIDTH = 500;
@@ -21,11 +25,9 @@ public class Game {
     // EFFECTS: initalizes new sandbox game
     public Game() {
         circles = new ArrayList<>();
-
         rand = new Random();
 
         id = 1;
-
         isRunning = true;
     }
 
@@ -129,5 +131,25 @@ public class Game {
 
     public ArrayList<Circle> getCircles() {
         return circles;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("sandbox", 0);
+        json.put("circles", circlesToJson());
+
+        return json;
+    }
+
+    private JSONArray circlesToJson() {
+        JSONArray jsonArr = new JSONArray();
+
+        for (Circle c : circles) {
+            jsonArr.put(c.toJson());
+        }
+
+        return jsonArr;
     }
 }

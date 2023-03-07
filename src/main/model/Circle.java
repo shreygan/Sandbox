@@ -1,9 +1,12 @@
 package model;
 
+import org.json.JSONObject;
+import persistence.Writeable;
+
 import java.awt.*;
 
 // Represents a circle with positions, velocities, diameter, color, and id
-public class Circle {
+public class Circle implements Writeable {
 
     public static final int XACC = 1;
     public static final int YACC = 1;
@@ -113,6 +116,21 @@ public class Circle {
     // EFFECTS: simulates bouncing off side boundaries
     public void bounceSide() {
         this.xvel *= BOUNCE_COEFFICENT;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        json.put("xpos", xpos);
+        json.put("ypos", ypos);
+        json.put("xvel", xvel);
+        json.put("yvel", yvel);
+        json.put("diam", diam);
+        json.put("color", color.getRGB());
+        json.put("id", id);
+
+        return json;
     }
 
     public int getXpos() {
