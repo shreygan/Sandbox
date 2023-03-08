@@ -73,6 +73,7 @@ public class Sandbox {
         }
     }
 
+    // EFFECTS: saves current running game to json file
     private void saveGame() {
         try {
             writer.open();
@@ -85,6 +86,8 @@ public class Sandbox {
         }
     }
 
+
+    // EFFECTS: loads new game from currently saved file
     private void loadGame() {
         try {
             game = reader.read();
