@@ -1,0 +1,9 @@
+{
+    "running": true,
+    "game": {
+        "width": 960,
+        "circles": [],
+        "id": 1,
+        "height": 600
+    }
+}

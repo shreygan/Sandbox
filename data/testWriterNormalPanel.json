@@ -1,0 +1,30 @@
+{
+    "running": true,
+    "game": {
+        "width": 960,
+        "circles": [
+            {
+                "ypos": 1,
+                "xpos": 1,
+                "color": -65536,
+                "id": 1,
+                "accelerating": true,
+                "yvel": 1,
+                "xvel": 1,
+                "diam": 1
+            },
+            {
+                "ypos": 2,
+                "xpos": 2,
+                "color": -65536,
+                "id": 2,
+                "accelerating": true,
+                "yvel": 2,
+                "xvel": 2,
+                "diam": 2
+            }
+        ],
+        "id": 3,
+        "height": 600
+    }
+}

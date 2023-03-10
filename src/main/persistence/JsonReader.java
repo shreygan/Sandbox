@@ -4,6 +4,8 @@ import model.Circle;
 import model.Game;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import ui.Sandbox;
+import ui.SandboxPanel;
 
 import java.awt.*;
 import java.io.FileInputStream;
@@ -21,26 +23,42 @@ public class JsonReader {
 
     // EFFECTS: reads json file at source and returns as Game
     // throwns IOException if an error occurs during reading data
-    public Game read() throws IOException {
+    public SandboxPanel read(Sandbox sandbox) throws IOException {
         InputStream is = new FileInputStream(source);
         JSONTokener tokener = new JSONTokener(is);
         JSONObject json = new JSONObject(tokener);
 
-        Game g = new Game();
+        SandboxPanel panel = new SandboxPanel(sandbox);
 
-        makeGame(g, json);
+        makeSandboxPanel(panel, json);
 
-        return g;
+        return panel;
     }
 
     // REQUIRES: given JSONObject must contain JSONArray w/ key circles
-    // MODIFIES: g
-    // EFFECTS: parses given JSONObject as game
-    private void makeGame(Game g, JSONObject json) {
+    // MODIFIES: p
+    // EFFECTS: parses given JSONObject as sandboxpanel
+    private void makeSandboxPanel(SandboxPanel p, JSONObject json) {
+        p.setRunning(json.getBoolean("running"));
+
+        p.setGame(makeGame(p, json.getJSONObject("game")));
+    }
+
+    private Game makeGame(SandboxPanel p, JSONObject json) {
+        Dimension d = new Dimension(json.getInt("width"), json.getInt("height"));
+
+        p.setSize(d);
+
+        Game g = new Game(d);
+
+        g.setId(json.getInt("id"));
+
         for (Object obj : json.getJSONArray("circles")) {
             JSONObject next = (JSONObject) obj;
             addCircle(g, next);
         }
+
+        return g;
     }
 
     // REQUIRES: given JSONObject must be storing a circle w/
@@ -53,9 +71,10 @@ public class JsonReader {
         int xvel = json.getInt("xvel");
         int yvel = json.getInt("yvel");
         int diam = json.getInt("diam");
-        Color c = new Color(json.getInt("color"));
+        Color color = new Color(json.getInt("color"));
         int id = json.getInt("id");
+        boolean accelerating = json.getBoolean("accelerating");
 
-        g.addCircle(new Circle(xpos, ypos, xvel, yvel, diam, c, id));
+        g.addCircle(new Circle(xpos, ypos, xvel, yvel, diam, color, id, accelerating));
     }
 }

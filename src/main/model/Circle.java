@@ -10,9 +10,8 @@ public class Circle implements Writeable {
 
     public static final int XACC = 1;
     public static final int YACC = 1;
-    public static final double X_COEFFICENT = .5;
+    public static final double X_COEFFICENT = .8;
     public static final double BOUNCE_COEFFICENT = -.8;
-    public static final double BOUNCE_DOWN_COEFFICENT = -1;
 
     private int xpos;
     private int ypos;
@@ -24,9 +23,10 @@ public class Circle implements Writeable {
 
     private Color color;
     private int id;
+    private boolean accelerating;
 
     // EFFECTS: initalizes new circle with all given variables
-    public Circle(int xpos, int ypos, int xvel, int yvel, int diam, Color color, int id) {
+    public Circle(int xpos, int ypos, int xvel, int yvel, int diam, Color color, int id, boolean accelerating) {
         this.xpos = xpos;
         this.ypos = ypos;
 
@@ -37,26 +37,17 @@ public class Circle implements Writeable {
 
         this.color = color;
         this.id = id;
+        this.accelerating = accelerating;
     }
 
-    // EFFECTS: returns next leftmost x position
-    public int nextLeftXCoord() {
+    // EFFECTS: returns next x position
+    public int nextX() {
         return xpos + xvel;
     }
 
-    // EFFECTS: returns next rightmost x position
-    public int nextRightXCoord() {
-        return nextLeftXCoord() + diam;
-    }
-
-    // EFFECTS: returns next upmost y position
-    public int nextUpYCoord() {
+    // EFFECTS: returns next y position
+    public int nextY() {
         return ypos + yvel;
-    }
-
-    // EFFECTS: returns next downmost y position
-    public int nextDownYCoord() {
-        return nextUpYCoord() + diam;
     }
 
     // MODIFIES: this
@@ -76,30 +67,40 @@ public class Circle implements Writeable {
     // MODIFIES: this
     // EFFECTS: updates x and y positions based on x and y velocities
     public void updatePos() {
-        this.xpos += this.xvel;
-        this.ypos += this.yvel;
+        if (accelerating) {
+            this.xpos += this.xvel;
+            this.ypos += this.yvel;
+        }
     }
 
     // MODIFIES: this
     // EFFECTS: updates x velocity
     public void updateXVel() {
-        if (this.xvel > 0) {
-            this.xvel -= XACC * X_COEFFICENT;
-        } else if (this.xvel < 0) {
-            this.xvel += XACC * X_COEFFICENT;
+        if (accelerating) {
+            if (xvel > 10 || xvel < -10) {
+                xvel *= X_COEFFICENT;
+            } else {
+                if (xvel > 0) {
+                    xvel -= XACC;
+                } else if (xvel < 0) {
+                    xvel += XACC;
+                }
+            }
         }
     }
 
     // MODIFIES: this
     // EFFECTS: updates y velocity
     public void updateYVel() {
-        this.yvel += YACC;
+        if (accelerating) {
+            yvel += YACC;
+        }
     }
 
     // MODIFIES: this
-    // EFFECTS: simulates bouncing off top boundary
-    public void bounceUp() {
-        if (yvel > 5) {
+    // EFFECTS: simulates bouncing off ground or ceiling
+    public void bounceY() {
+        if (yvel > 5 || yvel < -5) {
             this.yvel *= BOUNCE_COEFFICENT;
         } else {
             this.yvel = 0;
@@ -107,15 +108,9 @@ public class Circle implements Writeable {
     }
 
     // MODIFIES: this
-    // EFFECTS: simulates bouncing off ground
-    public void bounceDown() {
-        this.yvel *= BOUNCE_DOWN_COEFFICENT;
-    }
-
-    // MODIFIES: this
     // EFFECTS: simulates bouncing off side boundaries
-    public void bounceSide() {
-        this.xvel *= BOUNCE_COEFFICENT;
+    public void bounceX() {
+        this.xvel *= -1;
     }
 
     // EFFECTS: returns JSONObject representing all data of this
@@ -130,6 +125,7 @@ public class Circle implements Writeable {
         json.put("diam", diam);
         json.put("color", color.getRGB());
         json.put("id", id);
+        json.put("accelerating", accelerating);
 
         return json;
     }
@@ -160,5 +156,13 @@ public class Circle implements Writeable {
 
     public int getId() {
         return id;
+    }
+
+    public void setAccelerating(boolean accelerating) {
+        this.accelerating = accelerating;
+    }
+
+    public double getRad() {
+        return diam / 2f;
     }
 }

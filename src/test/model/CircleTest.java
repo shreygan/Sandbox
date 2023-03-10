@@ -12,109 +12,146 @@ public class CircleTest {
     private Circle c;
 
     @BeforeEach
-    public void setup() {
-        c = new Circle(Game.WIDTH / 2, Game.HEIGHT / 2, 1, 1, 10, Color.RED, 1);
+    void setup() {
+        c = new Circle(500, 500, 1, 1, 10, Color.RED, 1, true);
     }
 
     @Test
-    public void testConstructor() {
-        assertEquals(Game.WIDTH / 2, c.getXpos());
-        assertEquals(Game.HEIGHT / 2, c.getYpos());
-        assertEquals(1, c.getXvel());
-        assertEquals(1, c.getYvel());
-        assertEquals(10, c.getDiam());
-        assertEquals(Color.RED, c.getColor());
-        assertEquals(1, c.getId());
+    void testNextCoords() {
+        assertEquals(500 + 1, c.nextX());
+        assertEquals(500 + 1, c.nextY());
     }
 
     @Test
-    public void testNextLeftXCoord() {
-        assertEquals(c.getXpos() + c.getXvel(), c.nextLeftXCoord());
+    void testSetPosVel() {
+        c.setPos(0, 0);
+        c.setVel(10, 10);
+
+        assertEquals(0, c.getXpos());
+        assertEquals(0, c.getYpos());
+
+        assertEquals(10, c.getXvel());
+        assertEquals(10, c.getYvel());
     }
 
     @Test
-    public void testNextRightXCoord() {
-        assertEquals(c.getXpos() + c.getXvel() + c.getDiam(), c.nextRightXCoord());
-    }
+    void testUpdatePosAccelerating() {
+        c.setAccelerating(true);
 
-    @Test
-    public void testNextDownYCoord() {
-        assertEquals(c.getYpos() + c.getYvel() + c.getDiam(), c.nextDownYCoord());
-    }
-
-    @Test
-    public void testNextUpYCoord() {
-        assertEquals(c.getYpos() + c.getYvel(), c.nextUpYCoord());
-    }
-
-    @Test
-    public void testSetPos() {
-        c.setPos(100, 100);
-        assertEquals(100, c.getXpos());
-        assertEquals(100, c.getYpos());
-    }
-
-    @Test
-    public void testSetVel() {
-        c.setVel(100, 100);
-        assertEquals(100, c.getXvel());
-        assertEquals(100, c.getYvel());
-    }
-
-    @Test
-    public void testUpdatePos() {
-        int xpos = c.getXpos();
-        int ypos = c.getYpos();
         c.updatePos();
-        assertEquals(xpos + c.getXvel(), c.getXpos());
-        assertEquals(ypos + c.getYvel(), c.getYpos());
+
+        assertEquals(500 + 1, c.getXpos());
+        assertEquals(500 + 1, c.getYpos());
     }
 
     @Test
-    public void testUpdateXVelPos() {
-        c.setVel(100, 0);
+    void testUpdatePosNotAccelerating() {
+        c.setAccelerating(false);
+
+        c.updatePos();
+
+        assertEquals(500, c.getXpos());
+        assertEquals(500, c.getYpos());
+    }
+
+    @Test
+    void testUpdateXVelAcceleratingPosNeg20() {
+        c.setAccelerating(true);
+
+        c.setVel(20, 0);
         c.updateXVel();
-        assertEquals((int) (100 - (Circle.XACC * Circle.X_COEFFICENT)), c.getXvel());
-    }
 
-    @Test
-    public void testUpdateXVelNeg() {
-        c.setVel(-100, 0);
+        assertEquals(20 * Circle.X_COEFFICENT, c.getXvel());
+
+        c.setVel(-20, 0);
         c.updateXVel();
-        assertEquals((int) (-100 + (Circle.XACC * Circle.X_COEFFICENT)), c.getXvel());
+
+        assertEquals(-20 * Circle.X_COEFFICENT, c.getXvel());
     }
 
     @Test
-    public void testUpdateYVel() {
-        c.setVel(0, 100);
+    void testUpdateXVelNotAcceleratingPosNeg20() {
+        c.setAccelerating(false);
+
+        c.setVel(20, 0);
+        c.updateXVel();
+
+        assertEquals(20, c.getXvel());
+
+        c.setVel(-20, 0);
+        c.updateXVel();
+
+        assertEquals(-20, c.getXvel());
+    }
+
+    @Test
+    void testUpdateXVelPosNeg5() {
+        c.setVel(5, 0);
+        c.updateXVel();
+
+        assertEquals(5 - Circle.XACC, c.getXvel());
+
+        c.setVel(-5, 0);
+        c.updateXVel();
+
+        assertEquals(-5 + Circle.XACC, c.getXvel());
+    }
+
+    @Test
+    void testUpdateXVel0() {
+        c.setVel(0, 0);
+        c.updateXVel();
+
+        assertEquals(0, c.getXvel());
+    }
+
+    @Test
+    void testUpdateYVel() {
+        c.setAccelerating(true);
+        c.setVel(0, 20);
         c.updateYVel();
-        assertEquals(100 + Circle.YACC, c.getYvel());
+
+        assertEquals(20 + Circle.YACC, c.getYvel());
+
+        c.setAccelerating(false);
+        c.setVel(0, 20);
+        c.updateYVel();
+
+        assertEquals(20, c.getYvel());
     }
 
     @Test
-    public void testBounceUp100() {
-        c.setVel(0, 100);
-        c.bounceUp();
-        assertEquals(100 * Circle.BOUNCE_COEFFICENT, c.getYvel());
+    void testBounceYPosNeg10() {
+        c.setVel(0, 10);
+        c.bounceY();
+
+        assertEquals(10 * Circle.BOUNCE_COEFFICENT, c.getYvel());
+
+        c.setVel(0, -10);
+        c.bounceY();
+
+        assertEquals(-10 * Circle.BOUNCE_COEFFICENT, c.getYvel());
     }
 
     @Test
-    public void testBounceUp1() {
-        c.bounceUp();
+    void testBounceY3() {
+        c.setVel(0, 3);
+        c.bounceY();
+
         assertEquals(0, c.getYvel());
     }
 
     @Test
-    public void testBounceDown() {
-        c.setVel(0, 100);
-        c.bounceDown();
-        assertEquals(100 * Circle.BOUNCE_DOWN_COEFFICENT, c.getYvel());
+    void testBounceX() {
+        c.setVel(-10, 0);
+        c.bounceX();
+
+        assertEquals(10, c.getXvel());
     }
 
     @Test
-    public void testBounceSide() {
-        c.setVel(100, 0);
-        c.bounceSide();
-        assertEquals(100 * Circle.BOUNCE_COEFFICENT, c.getXvel());
+    void testGetters() {
+        assertEquals(Color.RED, c.getColor());
+        assertEquals(10 / 2f, c.getRad());
     }
 }

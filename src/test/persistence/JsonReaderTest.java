@@ -1,21 +1,30 @@
 package persistence;
 
 import model.Game;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ui.Sandbox;
+import ui.SandboxPanel;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class JsonReaderTest {
+
+    private Sandbox sandbox;
+
+    @BeforeEach
+    void setup() {
+        sandbox = new Sandbox("Test");
+    }
 
     @Test
     void testReaderInvalidFile() {
         JsonReader reader = new JsonReader("./data/invalidFile.json");
 
         try {
-            Game g = reader.read();
+            SandboxPanel panel = reader.read(sandbox);
             fail("expected IOException");
         } catch (IOException e) {
             // pass
@@ -23,30 +32,33 @@ public class JsonReaderTest {
     }
 
     @Test
-    void testReaderEmptyGame() {
-        JsonReader reader = new JsonReader("./data/testReaderEmptyGame.json");
+    void testReaderEmptyPanel() {
+        JsonReader reader = new JsonReader("./data/testReaderEmptyPanel.json");
 
         try {
-            Game g = reader.read();
+            SandboxPanel panel = reader.read(sandbox);
 
-            assertEquals(0, g.getCircles().size());
+
+            assertTrue(panel.isRunning());
+            assertEquals(0, panel.getGame().getCircles().size());
         } catch (IOException e) {
             fail("couldn't read file");
         }
     }
 
     @Test
-    void testReaderNormalGame() {
-        JsonReader reader = new JsonReader("./data/testReaderNormalGame.json");
+    void testReaderNormalPanel() {
+        JsonReader reader = new JsonReader("./data/testReaderNormalPanel.json");
 
         try {
-            Game g = reader.read();
+            SandboxPanel panel = reader.read(sandbox);
 
-            assertEquals(3, g.getCircles().size());
+            assertTrue(panel.isRunning());
 
-            assertEquals(1, g.getCircles().get(0).getId());
-            assertEquals(2, g.getCircles().get(1).getId());
-            assertEquals(3, g.getCircles().get(2).getId());
+            Game g = panel.getGame();
+
+            assertEquals(5, g.getId());
+            assertEquals(2, g.getCircles().size());
         } catch (IOException e) {
             fail("couldn't read file");
         }

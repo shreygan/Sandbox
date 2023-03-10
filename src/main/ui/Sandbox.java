@@ -1,99 +1,87 @@
 package ui;
 
-import model.Game;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 // Sandbox application
-public class Sandbox {
+public class Sandbox extends JFrame {
 
-    private static final int UPDATE_INTERVAL = 1000;
+    private static final int UPDATE_INTERVAL = 10;
 
     private static final String JSON_LOCATION = "./data/game.json";
     private JsonReader reader;
     private JsonWriter writer;
 
-    private Game game;
-    private Input in;
+    private SandboxPanel panel;
 
     // EFFECTS: starts new sandbox instance
-    public Sandbox() {
-        game = new Game();
+    public Sandbox(String title) {
+        super(title);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setUndecorated(false);
+
+        panel = new SandboxPanel(this);
+        panel.setFocusable(true);
+        add(panel);
+
+        pack();
+        setVisible(true);
 
         reader = new JsonReader(JSON_LOCATION);
         writer = new JsonWriter(JSON_LOCATION);
 
-        in = new Input();
-        in.start();
-
-        runSandbox();
+        startTimer();
     }
 
     // MODIFIES: this
-    // EFFECTS: processes user input
-    private void runSandbox() {
-        while (true) {
-            try {
-                Thread.sleep(UPDATE_INTERVAL);
+    // EFFECTS: starts timer that updates JFrame every UPDATE_INTERVAL
+    private void startTimer() {
+        Timer timer = new Timer(UPDATE_INTERVAL, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                panel.repaint();
 
-                if (in.hasNewInput()) {
-                    handleInput(in.getNextIn());
-                } else {
-                    if (game.isRunning()) {
-                        System.out.println(game.getOutput());
-                        System.out.println("-----------------");
-                    }
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                panel.tick();
             }
-        }
+        });
+
+        timer.start();
     }
 
-    // MODIFIES: this
-    // EFFECTS: processes user command
-    private void handleInput(String input) {
-        if (input.equals("c")) {
-            game.addCircle();
-        } else if (input.equals("p")) {
-            game.setRunning(!game.isRunning());
-        } else if (input.equals("r")) {
-            game.relaunchCircles();
-        } else if (input.equals("d")) {
-            game.deleteCircles();
-        } else if (input.equals("s")) {
-            saveGame();
-        } else if (input.equals("l")) {
-            loadGame();
-        } else if (input.equals("f")) {
-            System.exit(0);
-        }
-    }
-
-    // EFFECTS: saves current running game to json file
-    private void saveGame() {
+    // EFFECTS: saves current running panel to json file
+    public void saveGame() {
         try {
             writer.open();
-            writer.write(game);
+            writer.write(panel);
             writer.close();
-            System.out.println("Saved to " + JSON_LOCATION);
+            panel.displayMessage("Saved successfully!", "Save Sandbox");
         } catch (FileNotFoundException e) {
-            System.out.println("Error in writing to given file: " + JSON_LOCATION);
-            e.printStackTrace();
+            panel.displayMessage("Error in saving to file!", "Save Sandbox");
         }
     }
 
 
-    // EFFECTS: loads new game from currently saved file
-    private void loadGame() {
+    // EFFECTS: loads new panel from currently saved file
+    public void loadGame() {
         try {
-            game = reader.read();
-            System.out.println("Loaded from " + JSON_LOCATION);
+            SandboxPanel panel = reader.read(this);
+
+            getContentPane().removeAll();
+
+            this.panel = panel;
+            getContentPane().add(panel);
+            panel.setFocusable(true);
+            panel.requestFocus();
+            validate();
+            setVisible(true);
         } catch (IOException e) {
-            System.out.println("Error in reading from given file: " + JSON_LOCATION);
+            panel.displayMessage("Error in loading from file!", "Load Sandbox");
         }
     }
 }
