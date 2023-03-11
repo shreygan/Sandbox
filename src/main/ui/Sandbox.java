@@ -46,7 +46,6 @@ public class Sandbox extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 panel.repaint();
-
                 panel.tick();
             }
         });
@@ -60,12 +59,11 @@ public class Sandbox extends JFrame {
             writer.open();
             writer.write(panel);
             writer.close();
-            panel.displayMessage("Saved successfully!", "Save Sandbox");
+            panel.displayMessage("Save Sandbox", "Saved successfully!");
         } catch (FileNotFoundException e) {
-            panel.displayMessage("Error in saving to file!", "Save Sandbox");
+            panel.displayMessage("Save Sandbox", "Error in saving to file!");
         }
     }
-
 
     // EFFECTS: loads new panel from currently saved file
     public void loadGame() {
@@ -81,7 +79,7 @@ public class Sandbox extends JFrame {
             validate();
             setVisible(true);
         } catch (IOException e) {
-            panel.displayMessage("Error in loading from file!", "Load Sandbox");
+            panel.displayMessage("Load Sandbox", "Error in loading from file!");
         }
     }
 }

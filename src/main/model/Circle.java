@@ -113,6 +113,28 @@ public class Circle implements Writeable {
         this.xvel *= -1;
     }
 
+    // EFFECTS: returns true if given circles xpos and ypos on next tick will
+    //          overlap with this circle's next xpos and ypos
+    public boolean willOverlap(Circle c) {
+        double dist = this.getNextCenter().distance(c.getNextCenter());
+
+        return this.getRad() - c.getRad() < dist && dist < this.getRad() + c.getRad();
+    }
+
+    // EFFECTS: returns center of this on next tick
+    private Point getNextCenter() {
+        int x = nextX() + (diam / 2);
+        int y = nextY() + (diam / 2);
+
+        return new Point(x, y);
+    }
+
+    // EFFECTS: returns true if given mouse position is inside this circle
+    public boolean overlaps(Point mouseInit) {
+        return Math.pow(mouseInit.x - getCenter().x, 2) + Math.pow(mouseInit.y - getCenter().y, 2)
+                <= Math.pow(getRad(), 2);
+    }
+
     // EFFECTS: returns JSONObject representing all data of this
     @Override
     public JSONObject toJson() {
@@ -128,6 +150,19 @@ public class Circle implements Writeable {
         json.put("accelerating", accelerating);
 
         return json;
+    }
+
+    // EFFECTS: returns center of this circle
+    private Point getCenter() {
+        int x = xpos + (diam / 2);
+        int y = ypos + (diam / 2);
+
+        return new Point(x, y);
+    }
+
+    // EFFECTS: returns radius of this circle
+    public double getRad() {
+        return diam / 2f;
     }
 
     public int getXpos() {
@@ -160,9 +195,5 @@ public class Circle implements Writeable {
 
     public void setAccelerating(boolean accelerating) {
         this.accelerating = accelerating;
-    }
-
-    public double getRad() {
-        return diam / 2f;
     }
 }
