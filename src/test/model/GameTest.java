@@ -147,7 +147,7 @@ class GameTest {
 
         assertEquals(0, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (-20 * Circle.BOUNCE_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (-20 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
     }
 
     @Test
@@ -162,7 +162,7 @@ class GameTest {
 
         assertEquals(0, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (-6 * Circle.BOUNCE_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (-6 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
     }
 
     @Test
@@ -176,7 +176,7 @@ class GameTest {
         game.tick();
 
         assertEquals(0, c.getXpos());
-        assertEquals((int) (-20 * Circle.X_COEFFICENT * -1), c.getXvel());
+        assertEquals((int) (-20 * Circle.BOUNCE_COEFFICENT * -1), c.getXvel());
         assertEquals(Circle.YACC, c.getYvel());
     }
 
@@ -191,7 +191,7 @@ class GameTest {
         game.tick();
 
         assertEquals(game.getWidth() - 25, c.getXpos());
-        assertEquals((int) (20 * Circle.X_COEFFICENT * -1), c.getXvel());
+        assertEquals((int) (20 * Circle.BOUNCE_COEFFICENT * -1), c.getXvel());
         assertEquals(Circle.YACC, c.getYvel());
     }
 
@@ -207,6 +207,6 @@ class GameTest {
 
         assertEquals(game.getHeight() - 25, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (20 * Circle.BOUNCE_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (20 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
     }
 }

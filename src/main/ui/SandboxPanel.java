@@ -311,7 +311,9 @@ public class SandboxPanel extends JPanel
         } else if (e.getKeyCode() == KeyEvent.VK_R) {
             game.relaunchCircles();
         } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            game.deleteCircles(mousePos);
+            if (mousePos != null) {
+                game.deleteCircles(mousePos);
+            }
         } else if (e.getKeyCode() == KeyEvent.VK_S) {
             sandbox.saveGame();
         } else if (e.getKeyCode() == KeyEvent.VK_L) {
@@ -319,8 +321,10 @@ public class SandboxPanel extends JPanel
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             togglePause();
         } else if (e.getKeyCode() == KeyEvent.VK_T) {
-            game.addCircle(new Circle(game.getWidth() / 2,
-                    5, 0, -5, 25, Color.WHITE, 3, true));
+            game.addCircle(new Circle(game.getWidth() / 2, game.getHeight() - 300,
+                    0, 0, 300, Color.WHITE, -1, true));
+            game.addCircle(new Circle(game.getWidth() / 2, 400,
+                    0, 0, 50, Color.RED, -2, true));
         }
 
         if (!running && e.getKeyCode() == KeyEvent.VK_RIGHT) {

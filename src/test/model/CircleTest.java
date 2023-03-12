@@ -61,12 +61,12 @@ public class CircleTest {
         c.setVel(20, 0);
         c.updateXVel();
 
-        assertEquals(20 * Circle.X_COEFFICENT, c.getXvel());
+        assertEquals(20 * Circle.BOUNCE_COEFFICENT, c.getXvel());
 
         c.setVel(-20, 0);
         c.updateXVel();
 
-        assertEquals(-20 * Circle.X_COEFFICENT, c.getXvel());
+        assertEquals(-20 * Circle.BOUNCE_COEFFICENT, c.getXvel());
     }
 
     @Test
@@ -125,12 +125,12 @@ public class CircleTest {
         c.setVel(0, 10);
         c.bounceY();
 
-        assertEquals(10 * Circle.BOUNCE_COEFFICENT, c.getYvel());
+        assertEquals(10 * Circle.Y_COEFFICENT, c.getYvel());
 
         c.setVel(0, -10);
         c.bounceY();
 
-        assertEquals(-10 * Circle.BOUNCE_COEFFICENT, c.getYvel());
+        assertEquals(-10 * Circle.Y_COEFFICENT, c.getYvel());
     }
 
     @Test

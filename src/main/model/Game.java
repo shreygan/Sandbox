@@ -37,6 +37,7 @@ public class Game implements Writeable {
     public void tick() {
         for (Circle c : circles) {
             updateCircleBorders(c);
+            updateCircleCollisions(c);
         }
     }
 
@@ -64,6 +65,19 @@ public class Game implements Writeable {
             c.updatePos();
         }
         c.updateYVel();
+    }
+
+    // MODIFIES: this, c0
+    // EFFECTS: checks if c0 will collide with any other circles in jpanel,
+    //          and if they will, makes both bounce off
+    private void updateCircleCollisions(Circle c0) {
+        for (Circle c : circles) {
+            if (c != c0) {
+                if (c.willOverlap(c0)) {
+                    c0.bounceOff(c, circles);
+                }
+            }
+        }
     }
 
     // MODIFIES: this

@@ -4,14 +4,15 @@ import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 // Represents a circle with positions, velocities, diameter, color, and id
 public class Circle implements Writeable {
 
     public static final int XACC = 1;
     public static final int YACC = 1;
-    public static final double X_COEFFICENT = .8;
-    public static final double BOUNCE_COEFFICENT = -.8;
+    public static final double BOUNCE_COEFFICENT = .8;
+    public static final double Y_COEFFICENT = -.8;
 
     private int xpos;
     private int ypos;
@@ -65,6 +66,13 @@ public class Circle implements Writeable {
     }
 
     // MODIFIES: this
+    // EFFECTS: sets x and y velocities on given Vector2D
+    public void setVel(Vector2D vel) {
+        this.xvel = (int) vel.getV1();
+        this.yvel = (int) vel.getV2();
+    }
+
+    // MODIFIES: this
     // EFFECTS: updates x and y positions based on x and y velocities
     public void updatePos() {
         if (accelerating) {
@@ -78,7 +86,7 @@ public class Circle implements Writeable {
     public void updateXVel() {
         if (accelerating) {
             if (xvel > 10 || xvel < -10) {
-                xvel *= X_COEFFICENT;
+                xvel *= BOUNCE_COEFFICENT;
             } else {
                 if (xvel > 0) {
                     xvel -= XACC;
@@ -101,7 +109,7 @@ public class Circle implements Writeable {
     // EFFECTS: simulates bouncing off ground or ceiling
     public void bounceY() {
         if (yvel > 5 || yvel < -5) {
-            this.yvel *= BOUNCE_COEFFICENT;
+            this.yvel *= Y_COEFFICENT;
         } else {
             this.yvel = 0;
         }
@@ -127,6 +135,91 @@ public class Circle implements Writeable {
         int y = nextY() + (diam / 2);
 
         return new Point(x, y);
+    }
+
+    // REQUIRES: c0 != null
+    // MODIFIES: this, c0
+    // EFFECTS: simulates c0 and this circle bouncing off each other
+    public void bounceOff(Circle c0, ArrayList<Circle> circles) {
+        Point thisCenter = this.getCenter();
+        Point c0Center = c0.getCenter();
+
+        double angle = Math.atan2(c0Center.y - thisCenter.y, c0Center.x - thisCenter.x);
+
+        Vector2D thisVel = new Vector2D(this.xvel, this.yvel);
+        Vector2D c0Vel = new Vector2D(c0.xvel, c0.yvel);
+
+        int count = 0;
+        for (Circle c : circles) {
+            if (this.willOverlap(c)) {
+                count++;
+            }
+        }
+
+        if (count >= 2) {
+            System.out.println("count = " + count);
+            return;
+        }
+
+        if (thisVel.getSum() <= 1 && c0Vel.getSum() <= 1) {
+            if (this.isAbove(c0)) {
+                if (this.isLeftOf(c0)) {
+//                    thisVel.setV1(-1);
+                    this.xvel = -1;
+                    this.yvel = 0;
+                } else if (this.isRightOf(c0)) {
+                    this.xvel = 1;
+                    this.yvel = 0;
+                }
+            } else if (this.isBelow(c0)) {
+                if (c0.isLeftOf(this)) {
+                    c0.xvel = -1;
+                    c0.yvel = 0;
+                } else if (c0.isRightOf(this)) {
+                    c0.xvel = 1;
+                    c0.yvel = 0;
+                }
+            }
+//            thisVel.setV1(10);
+//            System.out.println("v1: " + thisVel.getV1() + "  v2: " + thisVel.getV2());
+        } else {
+            thisVel.rotateClockwise(angle);
+            c0Vel.rotateClockwise(angle);
+
+            // from 1D elastic collision equation
+            double thisNewV1 = ((thisVel.getV1() * (this.diam - c0.diam)) + (2 * c0.diam * c0Vel.getV1()))
+                    / (this.diam + c0.diam);
+            double c0NewV1 = ((c0Vel.getV1() * (c0.diam - this.diam)) + (2 * this.diam * thisVel.getV1()))
+                    / (this.diam + c0.diam);
+
+            thisVel.setV1(thisNewV1);
+            c0Vel.setV1(c0NewV1);
+
+            thisVel.rotateCounterClockwise(angle);
+            c0Vel.rotateCounterClockwise(angle);
+
+            thisVel.multiplyBy(BOUNCE_COEFFICENT);
+            c0Vel.multiplyBy(BOUNCE_COEFFICENT);
+
+            this.setVel(thisVel);
+            c0.setVel(c0Vel);
+        }
+    }
+
+    private boolean isAbove(Circle c0) {
+        return this.ypos <= c0.ypos;
+    }
+
+    private boolean isBelow(Circle c0) {
+        return this.ypos >= c0.ypos;
+    }
+
+    private boolean isLeftOf(Circle c0) {
+        return this.xpos <= c0.xpos;
+    }
+
+    private boolean isRightOf(Circle c0) {
+        return this.xpos >= c0.xpos;
     }
 
     // EFFECTS: returns true if given mouse position is inside this circle

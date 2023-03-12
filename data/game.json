@@ -2,8 +2,29 @@
     "running": true,
     "game": {
         "width": 2560,
-        "circles": [],
-        "id": 1,
-        "height": 1440
+        "circles": [
+            {
+                "ypos": 894,
+                "xpos": 239,
+                "color": -838246,
+                "id": 1,
+                "accelerating": true,
+                "yvel": 0,
+                "xvel": 0,
+                "diam": 518
+            },
+            {
+                "ypos": 1025,
+                "xpos": 447,
+                "color": -3612451,
+                "id": 2,
+                "accelerating": true,
+                "yvel": 2,
+                "xvel": 0,
+                "diam": 270
+            }
+        ],
+        "id": 3,
+        "height": 1412
     }
 }
