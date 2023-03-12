@@ -10,7 +10,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Scanner;
 
-public class SandboxPanel extends JPanel implements KeyListener, MouseMotionListener, MouseListener, Writeable {
+public class SandboxPanel extends JPanel
+        implements KeyListener, MouseMotionListener, MouseListener, ComponentListener, Writeable {
 
     private boolean mousePressed;
     private boolean mouseOnCircle;
@@ -24,6 +25,8 @@ public class SandboxPanel extends JPanel implements KeyListener, MouseMotionList
     private Sandbox sandbox;
     private Game game;
 
+    private GridBagConstraints gbc;
+
     // EFFECTS: Initialze new JPanel for sandbox with corresponding listeners
     public SandboxPanel(Sandbox sandbox) {
         super(new GridBagLayout());
@@ -34,12 +37,22 @@ public class SandboxPanel extends JPanel implements KeyListener, MouseMotionList
 
         game = new Game(d);
 //        game = new Game(new Dimension(d.width / 3 * 2, d.height / 3 * 2));
+        gbc = new GridBagConstraints();
 
         setBackground(Color.BLACK);
 
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
+        addComponentListener(this);
+
+        addPauseButton();
+        addSaveButton();
+        addLoadButton();
+        addDeleteButton();
+        addRelaunchButton();
+        addNewCircleButton();
+        addSpacing();
 
         mouseOnCircle = false;
         mousePressed = false;
@@ -88,6 +101,199 @@ public class SandboxPanel extends JPanel implements KeyListener, MouseMotionList
         g.fillOval(mouseDragInit.x - dim / 2, mouseDragInit.y - dim / 2, dim, dim);
     }
 
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds pause button to jpanel
+    private void addPauseButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Pause/Play");
+        button.setIcon(new ImageIcon("./data/pauseIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                togglePause();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds save button to jpanel
+    private void addSaveButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Save from JSON file");
+        button.setIcon(new ImageIcon("./data/saveIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sandbox.saveGame();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds load button to jpanel
+    private void addLoadButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Load from JSON file");
+        button.setIcon(new ImageIcon("./data/loadIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sandbox.loadGame();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds delete button to jpanel
+    private void addDeleteButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Delete all circles");
+        button.setIcon(new ImageIcon("./data/trashIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                game.deleteCircles();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 4;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds relaunch button to jpanel
+    private void addRelaunchButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Relaunch all circles");
+        button.setIcon(new ImageIcon("./data/launchIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                game.relaunchCircles();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 5;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds relaunch button to jpanel
+    private void addNewCircleButton() {
+        JButton button = new JButton();
+        button.setBorderPainted(false);
+        button.setFocusable(false);
+        button.setToolTipText("Add new circle");
+        button.setIcon(new ImageIcon("./data/circleIcon.png"));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                game.addCircle();
+            }
+        });
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 6;
+        gbc.gridy = 1;
+        gbc.ipadx = 10;
+        gbc.ipady = 10;
+
+        add(button, gbc);
+    }
+
+    // REQUIRES: gbc != null
+    // MODIFIES: this
+    // EFFECTS: adds spacing between buttons to jpanel
+    private void addSpacing() {
+        gbc.ipadx = 0;
+        gbc.ipady = 0;
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        add(Box.createHorizontalStrut(5), gbc);
+
+        gbc.weightx = 1;
+        gbc.weighty = 0;
+        gbc.gridx = 7;
+        gbc.gridy = 1;
+        add(Box.createHorizontalStrut(getWidth()), gbc);
+
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(Box.createVerticalStrut(10), gbc);
+
+        gbc.weightx = 0;
+        gbc.weighty = 1;
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        add(Box.createVerticalStrut(getHeight()), gbc);
+    }
 
     // MODIFIES: this
     // EFFECTS: shows message dialogue on this with given message and title
@@ -224,13 +430,20 @@ public class SandboxPanel extends JPanel implements KeyListener, MouseMotionList
         }
 
         if (mouseOnCircle && mouseDragInit != null && mouseDragCurr != null) {
-            game.moveCircleEnd();
+            game.releaseCircle();
             mouseOnCircle = false;
         }
 
         mousePressed = false;
         mouseDragInit = null;
         mouseDragCurr = null;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: handles being externally resized, updates game dimensions
+    @Override
+    public void componentResized(ComponentEvent e) {
+        game.setDimension(getWidth(), getHeight());
     }
 
     @Override
@@ -250,6 +463,21 @@ public class SandboxPanel extends JPanel implements KeyListener, MouseMotionList
 
     @Override
     public void mouseExited(MouseEvent e) {
+        // do nothing
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+        // do nothing
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+        // do nothing
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
         // do nothing
     }
 

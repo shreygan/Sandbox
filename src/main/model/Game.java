@@ -150,31 +150,14 @@ public class Game implements Writeable {
     // MODIFIES: this
     // EFFECTS: "drags" circle under moseCurr position
     public void moveCircle(Point mouseCurr) {
-        if (circles.size() == 1) {
-            circleDragged.setPos(mouseCurr.x - circleDragged.getDiam() / 2,
+        circleDragged.setPos(mouseCurr.x - circleDragged.getDiam() / 2,
                     mouseCurr.y - circleDragged.getDiam() / 2);
-        } else {
-            boolean canMove = true;
-            for (Circle c : circles) {
-                if (c != circleDragged && c.willOverlap(circleDragged)) {
-                    canMove = false;
-                    break;
-                } else {
-                    // TODO MAKE c BOUNCE OFF (when that works) so the circles never actually touch
-                }
-            }
-
-            if (canMove) {
-                circleDragged.setPos(mouseCurr.x - circleDragged.getDiam() / 2,
-                        mouseCurr.y - circleDragged.getDiam() / 2);
-            }
-        }
     }
 
     // REQUIRES: circleDragged != null
     // MODIFIES: this
     // EFFECTS: "releases" circle being dragged
-    public void moveCircleEnd() {
+    public void releaseCircle() {
         circleDragged.setAccelerating(true);
     }
 
@@ -212,6 +195,11 @@ public class Game implements Writeable {
 
     public int getId() {
         return id;
+    }
+
+    public void setDimension(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 
     public int getWidth() {
