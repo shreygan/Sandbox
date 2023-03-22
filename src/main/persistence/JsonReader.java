@@ -4,6 +4,8 @@ import model.Circle;
 import model.Game;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import ui.ActionHandler;
+import ui.GuiHandler;
 import ui.Sandbox;
 import ui.SandboxPanel;
 
@@ -41,7 +43,12 @@ public class JsonReader {
     private void makeSandboxPanel(SandboxPanel p, JSONObject json) {
         p.setRunning(json.getBoolean("running"));
 
-        p.setGame(makeGame(p, json.getJSONObject("game")));
+        Game g = makeGame(p, json.getJSONObject("game"));
+
+        p.setGame(g);
+        p.setGuiHandler(new GuiHandler(p, new GridBagConstraints()));
+        p.getActionHandler().removeAllListeners();
+        p.setActionHandler(new ActionHandler(p, g));
     }
 
     private Game makeGame(SandboxPanel p, JSONObject json) {

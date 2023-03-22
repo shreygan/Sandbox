@@ -23,15 +23,24 @@ public class CircleTest {
     }
 
     @Test
-    void testSetPosVel() {
+    void testSetPos() {
         c.setPos(0, 0);
-        c.setVel(10, 10);
 
         assertEquals(0, c.getXpos());
         assertEquals(0, c.getYpos());
+    }
+
+    @Test
+    void testSetVel() {
+        c.setVel(10, 10);
 
         assertEquals(10, c.getXvel());
         assertEquals(10, c.getYvel());
+
+        c.setVel(new Vector2D(15, 15));
+
+        assertEquals(15, c.getXvel());
+        assertEquals(15, c.getYvel());
     }
 
     @Test
@@ -147,6 +156,20 @@ public class CircleTest {
         c.bounceX();
 
         assertEquals(10, c.getXvel());
+    }
+
+    @Test
+    void testWillOverlapOverlapping() {
+        Circle c2 = new Circle(505, 500, 1, 1, 10, Color.RED, 1, true);
+
+        assertTrue(c.willOverlap(c2));
+    }
+
+    @Test
+    void testWillOverlapNotOverlapping() {
+        Circle c2 = new Circle(525, 500, 1, 1, 10, Color.RED, 1, true);
+
+        assertFalse(c.willOverlap(c2));
     }
 
     @Test

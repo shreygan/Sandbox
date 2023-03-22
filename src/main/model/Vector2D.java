@@ -2,52 +2,57 @@ package model;
 
 public class Vector2D  {
 
-    private double v1;
-    private double v2;
+    private double vx;
+    private double vy;
 
-    public Vector2D(double v1, double v2) {
-        this.v1 = v1;
-        this.v2 = v2;
+    public Vector2D(double vx, double vy) {
+        this.vx = vx;
+        this.vy = vy;
+    }
+
+    public Vector2D(Vector2D v) {
+        this.vx = v.vx;
+        this.vy = v.vy;
     }
 
     public void rotateClockwise(double angle) {
-        double tempv1 = this.v1 * Math.cos(angle) + this.v2 * Math.sin(angle);
-        double tempv2 = this.v1 * - Math.sin(angle) + this.v2 * Math.cos(angle);
+        double tempv1 = this.vx * Math.cos(angle) + this.vy * Math.sin(angle);
+        double tempv2 = this.vx * - Math.sin(angle) + this.vy * Math.cos(angle);
 
-        this.v1 = tempv1;
-        this.v2 = tempv2;
+        this.vx = tempv1;
+        this.vy = tempv2;
     }
 
     public void rotateCounterClockwise(double angle) {
-        double tempv1 = this.v1 * Math.cos(angle) - this.v2 * Math.sin(angle);
-        double tempv2 = this.v1 * Math.sin(angle) + this.v2 * Math.cos(angle);
+        double tempv1 = this.vx * Math.cos(angle) - this.vy * Math.sin(angle);
+        double tempv2 = this.vx * Math.sin(angle) + this.vy * Math.cos(angle);
 
-        this.v1 = tempv1;
-        this.v2 = tempv2;
+        this.vx = tempv1;
+        this.vy = tempv2;
     }
 
     public void multiplyBy(double x) {
-        this.v1 *= x;
-        this.v2 *= x;
+        this.vx *= x;
+        this.vy *= x;
     }
 
     public double getSum() {
-        return Math.abs(v1) + Math.abs(v2);
+        return Math.abs(vx) + Math.abs(vy);
     }
 
-    public double getV1() {
-        return v1;
+    public double getVx() {
+        return vx;
     }
 
-    public void setV1(double v1) {
-        this.v1 = v1;
+    public void setVx(double vx) {
+        this.vx = vx;
     }
 
-    public double getV2() {
-        return v2;
+    public double getVy() {
+        return vy;
     }
 
-    public void setV2(double v2) {
-        this.v2 = v2;
+    public void setVy(double vy) {
+        this.vy = vy;
     }
 }

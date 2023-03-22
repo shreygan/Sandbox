@@ -8,58 +8,41 @@ import persistence.Writeable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Scanner;
+import java.util.*;
 
 public class SandboxPanel extends JPanel
         implements KeyListener, MouseMotionListener, MouseListener, ComponentListener, Writeable {
-
-    private boolean mousePressed;
-    private boolean mouseOnCircle;
-    private Point mousePos;
-    private Point mouseDragInit;
-    private Point mouseDragCurr;
-    private Color mouseColor;
 
     private boolean running;
 
     private Sandbox sandbox;
     private Game game;
-
-    private GridBagConstraints gbc;
+    private GuiHandler guiHandler;
+    private ActionHandler actionHandler;
 
     // EFFECTS: Initialze new JPanel for sandbox with corresponding listeners
     public SandboxPanel(Sandbox sandbox) {
         super(new GridBagLayout());
 
-        this.sandbox = sandbox;
+        running = true;
 
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 
-        game = new Game(d);
-//        game = new Game(new Dimension(d.width / 3 * 2, d.height / 3 * 2));
-        gbc = new GridBagConstraints();
+        this.sandbox = sandbox;
+        this.game = new Game(d);
+        this.guiHandler = new GuiHandler(this, new GridBagConstraints());
+        this.actionHandler = new ActionHandler(this, this.game);
+
+        guiHandler.addPauseButton().addActionListener(e -> togglePause());
+        guiHandler.addSaveButton().addActionListener(e -> this.sandbox.saveGame());
+        guiHandler.addLoadButton().addActionListener(e -> this.sandbox.loadGame());
+        guiHandler.addDeleteButton().addActionListener(e -> game.deleteCircles());
+        guiHandler.addRelaunchButton().addActionListener(e -> game.relaunchCircles());
+        guiHandler.addNewCircleButton().addActionListener(e -> game.addCircle());
+        guiHandler.addSpacing();
 
         setBackground(Color.BLACK);
-
-        addKeyListener(this);
-        addMouseListener(this);
-        addMouseMotionListener(this);
-        addComponentListener(this);
-
-        addPauseButton();
-        addSaveButton();
-        addLoadButton();
-        addDeleteButton();
-        addRelaunchButton();
-        addNewCircleButton();
-        addSpacing();
-
-        mouseOnCircle = false;
-        mousePressed = false;
-        running = true;
-
         setPreferredSize(d);
-//        setPreferredSize(new Dimension(d.width / 3 * 2, d.height / 3 * 2));
     }
 
     // MODIFIES: this
@@ -71,13 +54,21 @@ public class SandboxPanel extends JPanel
     }
 
     // MODIFIES: this
+    // EFFECTS: pauses/plays this sandbox
+    public void togglePause() {
+        running = !running;
+    }
+
+    // MODIFIES: this
     // EFFECTS: paints this to JPanel
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (mouseDragInit != null && mouseDragCurr != null && mouseDragInit.y < mouseDragCurr.y) {
-            if (mousePressed) {
+        if (actionHandler.getMouseDragInit() != null
+                && actionHandler.getMouseDragCurr() != null
+                && actionHandler.getMouseDragInit().y < actionHandler.getMouseDragCurr().y) {
+            if (actionHandler.isMousePressed()) {
                 paintMouseDragged(g);
             }
         }
@@ -94,250 +85,57 @@ public class SandboxPanel extends JPanel
     // MODIFIES: this
     // EFFECTS: displays preview of circle created by mouse drag
     private void paintMouseDragged(Graphics g) {
-        g.setColor(mouseColor);
+        g.setColor(actionHandler.getMouseColor());
 
-        int dim = (mouseDragCurr.y - mouseDragInit.y) * 2;
+        int dim = (actionHandler.getMouseDragCurr().y - actionHandler.getMouseDragInit().y) * 2;
 
-        g.fillOval(mouseDragInit.x - dim / 2, mouseDragInit.y - dim / 2, dim, dim);
-    }
+        g.fillOval(actionHandler.getMouseDragInit().x - dim / 2,
+                actionHandler.getMouseDragInit().y - dim / 2, dim, dim);
 
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds pause button to jpanel
-    private void addPauseButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Pause/Play");
-        button.setIcon(new ImageIcon("./data/pauseIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                togglePause();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds save button to jpanel
-    private void addSaveButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Save from JSON file");
-        button.setIcon(new ImageIcon("./data/saveIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sandbox.saveGame();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds load button to jpanel
-    private void addLoadButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Load from JSON file");
-        button.setIcon(new ImageIcon("./data/loadIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sandbox.loadGame();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 3;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds delete button to jpanel
-    private void addDeleteButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Delete all circles");
-        button.setIcon(new ImageIcon("./data/trashIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                game.deleteCircles();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 4;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds relaunch button to jpanel
-    private void addRelaunchButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Relaunch all circles");
-        button.setIcon(new ImageIcon("./data/launchIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                game.relaunchCircles();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 5;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds relaunch button to jpanel
-    private void addNewCircleButton() {
-        JButton button = new JButton();
-        button.setBorderPainted(false);
-        button.setFocusable(false);
-        button.setToolTipText("Add new circle");
-        button.setIcon(new ImageIcon("./data/circleIcon.png"));
-
-        button.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                game.addCircle();
-            }
-        });
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 6;
-        gbc.gridy = 1;
-        gbc.ipadx = 10;
-        gbc.ipady = 10;
-
-        add(button, gbc);
-    }
-
-    // REQUIRES: gbc != null
-    // MODIFIES: this
-    // EFFECTS: adds spacing between buttons to jpanel
-    private void addSpacing() {
-        gbc.ipadx = 0;
-        gbc.ipady = 0;
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 0;
-        gbc.gridy = 1;
-        add(Box.createHorizontalStrut(5), gbc);
-
-        gbc.weightx = 1;
-        gbc.weighty = 0;
-        gbc.gridx = 7;
-        gbc.gridy = 1;
-        add(Box.createHorizontalStrut(getWidth()), gbc);
-
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        add(Box.createVerticalStrut(10), gbc);
-
-        gbc.weightx = 0;
-        gbc.weighty = 1;
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        add(Box.createVerticalStrut(getHeight()), gbc);
+        System.out.println("DRAGGING");
     }
 
     // MODIFIES: this
     // EFFECTS: shows message dialogue on this with given message and title
     public void displayMessage(String title, String message) {
-        JOptionPane.showMessageDialog(this, message, title,
-                JOptionPane.PLAIN_MESSAGE);
+        guiHandler.displayMessage(title, message);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: displays new joptionpane for creating new circle
+    public String getJOptionPane(MouseEvent e) {
+        return guiHandler.getJOptionPane(e);
+    }
+
+    // EFFECTS: saves current sandbox
+    public void saveGame() {
+        sandbox.saveGame();
+    }
+
+    // EFFECTS: loads to current sandbox
+    public void loadGame() {
+        sandbox.loadGame();
     }
 
     // MODIFIES: this
     // EFFECTS: handles key pressed events on this
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_C) {
-            game.addCircle();
-        } else if (e.getKeyCode() == KeyEvent.VK_R) {
-            game.relaunchCircles();
-        } else if (e.getKeyCode() == KeyEvent.VK_D) {
-            if (mousePos != null) {
-                game.deleteCircles(mousePos);
-            }
-        } else if (e.getKeyCode() == KeyEvent.VK_S) {
-            sandbox.saveGame();
-        } else if (e.getKeyCode() == KeyEvent.VK_L) {
-            sandbox.loadGame();
-        } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-            togglePause();
-        } else if (e.getKeyCode() == KeyEvent.VK_T) {
-            game.addCircle(new Circle(game.getWidth() / 2, game.getHeight() - 300,
-                    0, 0, 300, Color.WHITE, -1, true));
-            game.addCircle(new Circle(game.getWidth() / 2, 400,
-                    0, 0, 50, Color.RED, -2, true));
-        }
-
-        if (!running && e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            game.tick();
-        } else if (!running && e.getKeyCode() == KeyEvent.VK_LEFT) {
-            // TODO MAKE GAME GO IN REVERSE
-        }
+        actionHandler.keyPressed(e);
     }
 
     // MODIFIES: this
-    // EFFECTS: pauses/plays this sandbox
-    private void togglePause() {
-        running = !running;
+    // EFFECTS: handles key typed event
+    @Override
+    public void keyTyped(KeyEvent e) {
+        actionHandler.keyTyped(e);
+    }
+
+    // MODIFIES: this
+    // EFFECTS: handles key released event
+    @Override
+    public void keyReleased(KeyEvent e) {
+        actionHandler.keyReleased(e);
     }
 
     // MODIFIES: this
@@ -345,18 +143,14 @@ public class SandboxPanel extends JPanel
     //          simulates "dragging" circle
     @Override
     public void mouseDragged(MouseEvent e) {
-        mouseDragCurr = e.getPoint();
-
-        if (mouseOnCircle) {
-            game.moveCircle(mouseDragCurr);
-        }
+        actionHandler.mouseDragged(e);
     }
 
     // MODIFIES: this
     // EFFECTS: sets current position of mouse
     @Override
     public void mouseMoved(MouseEvent e) {
-        mousePos = e.getPoint();
+        actionHandler.mouseMoved(e);
     }
 
     // MODIFIES: this
@@ -364,64 +158,14 @@ public class SandboxPanel extends JPanel
     //          to add new circle
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-            int[] output = new int[3];
-            do {
-                String result = getJOptionPane(e);
-
-                if (result == null) {
-                    break;
-                }
-
-                if (!result.matches("[^0-9]*")) {
-                    Scanner sc = new Scanner(result).useDelimiter("[^0-9^-]+");
-
-                    int i;
-                    for (i = 0; i < 3; i++) {
-                        if (!sc.hasNextInt()) {
-                            break;
-                        }
-                        output[i] = sc.nextInt();
-                    }
-
-                    if (i == 3) {
-                        game.addCircle(e.getPoint(), output[0], output[1], output[2]);
-                        break;
-                    }
-                }
-            } while (true);
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: displays new joptionpane for creating new circle
-    private String getJOptionPane(MouseEvent e) {
-        return JOptionPane.showInputDialog(this,
-                "Enter \"{x velocity} {y velocity} {radius}\"",
-                "New Circle at (" + e.getPoint().x + ", " + e.getPoint().y + ")",
-                JOptionPane.PLAIN_MESSAGE);
+        actionHandler.mouseClicked(e);
     }
 
     // MODIFIES: this
     // EFFECTS: handles mouse pressed event, sets mouse position variables
     @Override
     public void mousePressed(MouseEvent e) {
-        mouseDragInit = e.getPoint();
-
-        mouseColor = new Color((int) (Math.random() * 0x1000000));
-
-        Circle dragged = game.overlaps(mouseDragInit);
-
-        if (dragged != null) {
-            dragged.setVel(0, 0);
-            dragged.setAccelerating(false);
-
-            game.setCircleDragged(dragged);
-
-            mouseOnCircle = true;
-        } else {
-            mousePressed = true;
-        }
+        actionHandler.mousePressed(e);
     }
 
     // MODIFIES: this
@@ -429,60 +173,49 @@ public class SandboxPanel extends JPanel
     //          or drops circle that was picked up with mouse drag
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (mousePressed && mouseDragInit != null && mouseDragCurr != null && mouseDragInit.y < mouseDragCurr.y) {
-            game.addCircle(mouseDragInit, mouseDragCurr, mouseColor);
-        }
+        actionHandler.mouseReleased(e);
+    }
 
-        if (mouseOnCircle && mouseDragInit != null && mouseDragCurr != null) {
-            game.releaseCircle();
-            mouseOnCircle = false;
-        }
+    // MODIFIES: this
+    // EFFECTS: handles mouse entered event
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        actionHandler.mouseEntered(e);
+    }
 
-        mousePressed = false;
-        mouseDragInit = null;
-        mouseDragCurr = null;
+    // MODIFIES: this
+    // EFFECTS: handles mouse exited event
+    @Override
+    public void mouseExited(MouseEvent e) {
+        actionHandler.mouseExited(e);
     }
 
     // MODIFIES: this
     // EFFECTS: handles being externally resized, updates game dimensions
     @Override
     public void componentResized(ComponentEvent e) {
-        game.setDimension(getWidth(), getHeight());
+        actionHandler.componentResized(e);
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {
-        // do nothing
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-        // do nothing
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // do nothing
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // do nothing
-    }
-
+    // MODIFIES: this
+    // EFFECTS: handles component being externally moved
     @Override
     public void componentMoved(ComponentEvent e) {
-        // do nothing
+        actionHandler.componentMoved(e);
     }
 
+    // MODIFIES: this
+    // EFFECTS: handles component being externally shown
     @Override
     public void componentShown(ComponentEvent e) {
-        // do nothing
+        actionHandler.componentShown(e);
     }
 
+    // MODIFIES: this
+    // EFFECTS: handles component being externally hidden
     @Override
     public void componentHidden(ComponentEvent e) {
-        // do nothing
+        actionHandler.componentHidden(e);
     }
 
     // EFFECTS: returns json object of this
@@ -510,5 +243,17 @@ public class SandboxPanel extends JPanel
 
     public boolean isRunning() {
         return running;
+    }
+
+    public void setGuiHandler(GuiHandler guiHandler) {
+        this.guiHandler = guiHandler;
+    }
+
+    public ActionHandler getActionHandler() {
+        return actionHandler;
+    }
+
+    public void setActionHandler(ActionHandler actionHandler) {
+        this.actionHandler = actionHandler;
     }
 }

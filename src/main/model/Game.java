@@ -41,6 +41,12 @@ public class Game implements Writeable {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: "ticks" game in reverse
+    public void untick() {
+        // TODO IMPLEMENT METHOD
+    }
+
     // MODIFIES: this, c
     // EFFECTS: updates positions and velocities of all circles in sandbox,
     //          also processes circles hitting the boundaries
@@ -71,6 +77,10 @@ public class Game implements Writeable {
     // EFFECTS: checks if c0 will collide with any other circles in jpanel,
     //          and if they will, makes both bounce off
     private void updateCircleCollisions(Circle c0) {
+        if (c0 == circleDragged) {
+            return;
+        }
+
         for (Circle c : circles) {
             if (c != c0) {
                 if (c.willOverlap(c0)) {
@@ -92,6 +102,7 @@ public class Game implements Writeable {
         id++;
     }
 
+    // REQUIRES: circle doesn't overlap with existing circles
     // MODIFIES: this
     // EFFECTS: adds given circle to sandbox
     public void addCircle(Circle c) {
@@ -100,6 +111,7 @@ public class Game implements Writeable {
         id++;
     }
 
+    // REQUIRES: circle doesn't overlap with existing circles
     // MODIFIES: this
     // EFFECTS: adds circle on mouse position with given xvel, yvel, and rad
     public void addCircle(Point mouseCurr, int xvel, int yvel, int rad) {
@@ -109,6 +121,7 @@ public class Game implements Writeable {
         id++;
     }
 
+    // REQUIRES: circle doesn't overlap with existing circles
     // MODIFIES: this
     // EFFECTS: adds circle size of mouse drag with given color
     public void addCircle(Point mouseInit, Point mouseCurr, Color c) {
@@ -138,9 +151,9 @@ public class Game implements Writeable {
     // EFFECTS: if circle under given mouse position, deletes that
     //          circle, otherwise deletes all circles in game
     public void deleteCircles(Point mousePos) {
-        for (Circle c : circles) {
-            if (c.overlaps(mousePos)) {
-                circles.remove(c);
+        for (int i = circles.size() - 1; i >= 0; i--) {
+            if (circles.get(i).overlaps(mousePos)) {
+                circles.remove(circles.get(i));
                 return;
             }
         }
@@ -170,7 +183,17 @@ public class Game implements Writeable {
 
     // REQUIRES: circleDragged != null
     // MODIFIES: this
-    // EFFECTS: "releases" circle being dragged
+    // EFFECTS: "releases" circle being dragged w/ velocities based on time held and mouse positions
+    public void releaseCircle(Point mouseInit, Point mouseCurr, double t) {
+        circleDragged.setAccelerating(true);
+
+        double angle = Math.atan2(mouseCurr.y - mouseInit.y, mouseCurr.x - mouseInit.x);
+
+        circleDragged.setVel((int) ((Math.cos(angle) * 20) / (t / 200)), (int) ((Math.sin(angle) * 20) / (t / 200)));
+    }
+
+    // MODIFIES: this
+    // EFFECTS: "releases" circle with 0 x and y velocities
     public void releaseCircle() {
         circleDragged.setAccelerating(true);
     }

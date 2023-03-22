@@ -68,8 +68,8 @@ public class Circle implements Writeable {
     // MODIFIES: this
     // EFFECTS: sets x and y velocities on given Vector2D
     public void setVel(Vector2D vel) {
-        this.xvel = (int) vel.getV1();
-        this.yvel = (int) vel.getV2();
+        this.xvel = (int) vel.getVx();
+        this.yvel = (int) vel.getVy();
     }
 
     // MODIFIES: this
@@ -149,61 +149,69 @@ public class Circle implements Writeable {
         Vector2D thisVel = new Vector2D(this.xvel, this.yvel);
         Vector2D c0Vel = new Vector2D(c0.xvel, c0.yvel);
 
-        int count = 0;
-        for (Circle c : circles) {
-            if (this.willOverlap(c)) {
-                count++;
-            }
-        }
+        Vector2D thisVelCopy = new Vector2D(thisVel);
+        Vector2D c0VelCopy = new Vector2D(c0Vel);
 
-        if (count >= 2) {
-            System.out.println("count = " + count);
-            return;
-        }
+//        int count = 0;
+//        for (Circle c : circles) {
+//            if (this.willOverlap(c)) {
+//                count++;
+//            }
+//        }
 
-        if (thisVel.getSum() <= 1 && c0Vel.getSum() <= 1) {
-            if (this.isAbove(c0)) {
-                if (this.isLeftOf(c0)) {
-//                    thisVel.setV1(-1);
-                    this.xvel = -1;
-                    this.yvel = 0;
-                } else if (this.isRightOf(c0)) {
-                    this.xvel = 1;
-                    this.yvel = 0;
-                }
-            } else if (this.isBelow(c0)) {
-                if (c0.isLeftOf(this)) {
-                    c0.xvel = -1;
-                    c0.yvel = 0;
-                } else if (c0.isRightOf(this)) {
-                    c0.xvel = 1;
-                    c0.yvel = 0;
-                }
-            }
-//            thisVel.setV1(10);
-//            System.out.println("v1: " + thisVel.getV1() + "  v2: " + thisVel.getV2());
-        } else {
-            thisVel.rotateClockwise(angle);
-            c0Vel.rotateClockwise(angle);
+//        if (count >= 2) {
+//            System.out.println("count = " + count);
+//            return;
+//        }
 
-            // from 1D elastic collision equation
-            double thisNewV1 = ((thisVel.getV1() * (this.diam - c0.diam)) + (2 * c0.diam * c0Vel.getV1()))
-                    / (this.diam + c0.diam);
-            double c0NewV1 = ((c0Vel.getV1() * (c0.diam - this.diam)) + (2 * this.diam * thisVel.getV1()))
-                    / (this.diam + c0.diam);
+//        if (thisVel.getSum() <= 1 && c0Vel.getSum() <= 1) {
+//            if (this.isAbove(c0)) {
+//                if (this.isLeftOf(c0)) {
+//                    this.xvel = -1;
+//                    this.yvel = 0;
+//                } else if (this.isRightOf(c0)) {
+//                    this.xvel = 1;
+//                    this.yvel = 0;
+//                }
+//            } else if (this.isBelow(c0)) {
+//                if (c0.isLeftOf(this)) {
+//                    c0.xvel = -1;
+//                    c0.yvel = 0;
+//                } else if (c0.isRightOf(this)) {
+//                    c0.xvel = 1;
+//                    c0.yvel = 0;
+//                }
+//            }
+//        }
+        thisVel.rotateClockwise(angle);
+        c0Vel.rotateClockwise(angle);
 
-            thisVel.setV1(thisNewV1);
-            c0Vel.setV1(c0NewV1);
+        // from 1D elastic collision equation
+        double thisNewV1 = ((thisVel.getVx() * (this.diam - c0.diam)) + (2 * c0.diam * c0Vel.getVx()))
+                / (this.diam + c0.diam);
+        double c0NewV1 = ((c0Vel.getVx() * (c0.diam - this.diam)) + (2 * this.diam * thisVel.getVx()))
+                / (this.diam + c0.diam);
 
-            thisVel.rotateCounterClockwise(angle);
-            c0Vel.rotateCounterClockwise(angle);
+        thisVel.setVx(thisNewV1);
+        c0Vel.setVx(c0NewV1);
 
-            thisVel.multiplyBy(BOUNCE_COEFFICENT);
-            c0Vel.multiplyBy(BOUNCE_COEFFICENT);
+        thisVel.rotateCounterClockwise(angle);
+        c0Vel.rotateCounterClockwise(angle);
 
-            this.setVel(thisVel);
-            c0.setVel(c0Vel);
-        }
+        thisVel.multiplyBy(BOUNCE_COEFFICENT);
+        c0Vel.multiplyBy(BOUNCE_COEFFICENT);
+
+        this.setVel(thisVel);
+        c0.setVel(c0Vel);
+
+//        for (Circle c : circles) {
+//            if (c != c0 && this.willOverlap(c)) {
+//                this.setVel(thisVelCopy);
+//                c0.setVel(c0VelCopy);
+//                System.out.println("TRUE");
+//                return;
+//            }
+//        }
     }
 
     private boolean isAbove(Circle c0) {

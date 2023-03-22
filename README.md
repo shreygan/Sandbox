@@ -38,3 +38,27 @@ with the program.
 
 - As a user, I want to be able to save the current state of the sandbox
 - As a user, I want to be able to load a sandbox from a file
+
+- As a user, I want to be able to drag my mouse to create a circle
+- As a user, I want to be able to add a circle with specific position, speed, and size variables
+- As a user, I want to be able to pick up, move, and "throw" the circles using my mouse
+- As a user, I want the circles to bounce off of each other as well
+- As a user, I want to be able to have the option of deleting a specific circle
+
+<br/>
+
+### Instructions for Grader
+
+- You can generate the first required action related to adding a circle to a sandbox by
+  - dragging and releasing your mouse
+  - pressing the plus button on the jpanel
+  - pressing c
+- You can generate the second required action related to adding a cirlce to a sandbox by
+  - double-clicking where you want a circle to specify the circle's attributes
+- You can locate my visual component by running Main.java
+- You can save the state of my application by
+  - pressing the save button on the jpanel
+  - pressing s
+- You can reload the state of my application by
+  - pressing the load button on the jpanel
+  - pressing l
