@@ -11,6 +11,8 @@ import java.util.Random;
 // Represents the sandbox game with all it's circles
 public class Game implements Writeable {
 
+    public static final int THROW_SPEED = 200;
+
     private int width;
     private int height;
 
@@ -184,16 +186,17 @@ public class Game implements Writeable {
     // REQUIRES: circleDragged != null
     // MODIFIES: this
     // EFFECTS: "releases" circle being dragged w/ velocities based on time held and mouse positions
-    public void releaseCircle(Point mouseInit, Point mouseCurr, double t) {
+    public void releaseCircle(Point mouseInit, Point mouseCurr, double time) {
         circleDragged.setAccelerating(true);
 
         double angle = Math.atan2(mouseCurr.y - mouseInit.y, mouseCurr.x - mouseInit.x);
 
-        circleDragged.setVel((int) ((Math.cos(angle) * 20) / (t / 200)), (int) ((Math.sin(angle) * 20) / (t / 200)));
+        circleDragged.setVel((int) ((Math.cos(angle) * THROW_SPEED / 10) / (time / THROW_SPEED)),
+                (int) ((Math.sin(angle) * THROW_SPEED / 10) / (time / THROW_SPEED)));
     }
 
     // MODIFIES: this
-    // EFFECTS: "releases" circle with 0 x and y velocities
+    // EFFECTS: "releases" circle with same x and y velocities
     public void releaseCircle() {
         circleDragged.setAccelerating(true);
     }
@@ -247,6 +250,7 @@ public class Game implements Writeable {
         return height;
     }
 
+    // REQUIRES: circles contains circleDragged
     public void setCircleDragged(Circle circleDragged) {
         this.circleDragged = circleDragged;
     }

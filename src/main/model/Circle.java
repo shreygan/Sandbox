@@ -236,6 +236,14 @@ public class Circle implements Writeable {
                 <= Math.pow(getRad(), 2);
     }
 
+    // EFFECTS: returns center of this circle
+    private Point getCenter() {
+        int x = xpos + (diam / 2);
+        int y = ypos + (diam / 2);
+
+        return new Point(x, y);
+    }
+
     // EFFECTS: returns JSONObject representing all data of this
     @Override
     public JSONObject toJson() {
@@ -251,14 +259,6 @@ public class Circle implements Writeable {
         json.put("accelerating", accelerating);
 
         return json;
-    }
-
-    // EFFECTS: returns center of this circle
-    private Point getCenter() {
-        int x = xpos + (diam / 2);
-        int y = ypos + (diam / 2);
-
-        return new Point(x, y);
     }
 
     // EFFECTS: returns radius of this circle

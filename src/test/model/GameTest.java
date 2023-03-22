@@ -40,7 +40,7 @@ class GameTest {
     }
 
     @Test
-    void testAddCircle() {
+    void testAddCircleRandom() {
         game.addCircle();
         game.addCircle();
 
@@ -48,10 +48,69 @@ class GameTest {
     }
 
     @Test
+    void testAddCircleGivenCircle() {
+        Circle c = new Circle(1, 1, 1, 1, 1, Color.RED, 1, true);
+        game.addCircle(c);
+
+        assertEquals(3, game.getCircles().size());
+        assertTrue(game.getCircles().contains(c));
+    }
+
+    @Test
+    void testAddCircleOnMousePos() {
+        Point p = new Point(20, 435);
+        game.addCircle(p, 23, 23, 23);
+
+        assertEquals(3, game.getCircles().size());
+        assertTrue(game.getCircles().get(2).overlaps(new Point(p.x + 12, p.y + 12)));
+    }
+
+    @Test
+    void testAddCircleGivenMouseDrag() {
+        Point mouseInit = new Point(10, 10);
+        Point mouseCurr = new Point(20, 20);
+
+        int rad = (mouseCurr.y - mouseInit.y) * 2;
+        Circle c1 = new Circle(mouseInit.x - rad / 2, mouseInit.y - rad / 2,
+                12, 13, rad, Color.RED, 4, true);
+
+        game.addCircle(mouseInit, mouseCurr, Color.RED);
+
+        assertEquals(3, game.getCircles().size());
+        Circle c2 = game.getCircles().get(2);
+
+        assertEquals(c1.getXpos(), c2.getXpos());
+        assertEquals(c1.getYpos(), c2.getYpos());
+        assertEquals(c1.getRad(), c2.getRad());
+    }
+
+    @Test
     void testDeleteCircles() {
         assertEquals(2, game.getCircles().size());
 
         game.deleteCircles();
+
+        assertEquals(0, game.getCircles().size());
+    }
+
+    @Test
+    void testDeleteCirclesGivenOverlappingMousePos() {
+        assertEquals(2, game.getCircles().size());
+
+        Point p = new Point((int) (c1.getXpos() + c1.getRad()), (int) (c1.getYpos() + c1.getRad()));
+        game.deleteCircles(p);
+
+        assertEquals(1, game.getCircles().size());
+        assertTrue(game.getCircles().contains(c2));
+        assertFalse(game.getCircles().contains(c1));
+    }
+
+    @Test
+    void testDeleteCirclesGivenNormalMousePos() {
+        assertEquals(2, game.getCircles().size());
+
+        Point p = new Point(1, 1);
+        game.deleteCircles(p);
 
         assertEquals(0, game.getCircles().size());
     }
@@ -70,6 +129,55 @@ class GameTest {
 
         assertNotEquals(c2Copy.getXvel(), c2.getXvel());
         assertNotEquals(c2Copy.getYvel(), c2.getYvel());
+    }
+
+    @Test
+    void testOverlaps() {
+        Point p = new Point((int) (c1.getXpos() + c1.getRad()), (int) (c1.getYpos() + c1.getRad()));
+        assertEquals(c1, game.overlaps(p));
+    }
+
+    @Test
+    void testNotOverlaps() {
+        Point p = new Point(1, 1);
+        assertNull(game.overlaps(p));
+    }
+
+    @Test
+    void testMoveCircle() {
+        game.setCircleDragged(c1);
+        game.moveCircle(new Point(100, 100));
+
+        assertEquals(c1.getXpos(), 100 - c1.getDiam() / 2);
+        assertEquals(c1.getYpos(), 100 - c1.getDiam() / 2);
+    }
+
+    @Test
+    void testReleaseCircleThrow() {
+        game.setCircleDragged(c1);
+
+        Point mouseInit = new Point(c1.getXpos(), c1.getYpos());
+        Point mouseCurr = new Point(c1.getXpos() + 200, c1.getYpos() - 200);
+
+        game.releaseCircle(mouseInit, mouseCurr, 500);
+
+        double angle = Math.atan2(mouseCurr.y - mouseInit.y, mouseCurr.x - mouseInit.x);
+
+        assertEquals(c1.getXvel(), (int) ((Math.cos(angle) * Game.THROW_SPEED / 10) / (500f / Game.THROW_SPEED)));
+        assertEquals(c1.getYvel(), (int) ((Math.sin(angle) * Game.THROW_SPEED / 10) / (500f / Game.THROW_SPEED)));
+    }
+
+    @Test
+    void testReleaseCircleNormal() {
+        game.setCircleDragged(c1);
+
+        int xvel = c1.getXvel();
+        int yvel = c1.getYvel();
+
+        game.releaseCircle();
+
+        assertEquals(xvel, c1.getXvel());
+        assertEquals(yvel, c1.getYvel());
     }
 
     @Test
@@ -209,4 +317,6 @@ class GameTest {
         assertEquals(0, c.getXvel());
         assertEquals((int) (20 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
     }
+
+
 }

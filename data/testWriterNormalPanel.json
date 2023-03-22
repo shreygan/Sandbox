@@ -1,7 +1,7 @@
 {
     "running": true,
     "game": {
-        "width": 1440,
+        "width": 2560,
         "circles": [
             {
                 "ypos": 1,
@@ -25,6 +25,6 @@
             }
         ],
         "id": 3,
-        "height": 900
+        "height": 1440
     }
 }

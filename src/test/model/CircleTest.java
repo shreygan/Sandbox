@@ -173,6 +173,16 @@ public class CircleTest {
     }
 
     @Test
+    void testOverlaps() {
+        assertTrue(c.overlaps(new Point(505, 505)));
+    }
+
+    @Test
+    void testNotOverlaps() {
+        assertFalse(c.overlaps(new Point(510, 510)));
+    }
+
+    @Test
     void testGetters() {
         assertEquals(Color.RED, c.getColor());
         assertEquals(10 / 2f, c.getRad());
