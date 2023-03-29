@@ -64,4 +64,38 @@ public class Vector2D  {
     public void setVy(double vy) {
         this.vy = vy;
     }
+
+    @Override
+    public String toString() {
+        return " vx: " + vx + ", vy: " + vy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Vector2D)) {
+            return false;
+        }
+
+        Vector2D vector2D = (Vector2D) o;
+
+        if ((int) vector2D.vx != (int) vx) {
+            return false;
+        }
+
+        return (int) vector2D.vy == (int) vy;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(vx);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(vy);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }

@@ -23,6 +23,8 @@ public class Game implements Writeable {
 
     private Random rand;
 
+    private double d;
+
     // EFFECTS: initalizes new sandbox game
     public Game(Dimension dim) {
         width = dim.width;
@@ -88,17 +90,68 @@ public class Game implements Writeable {
                 if (c.willOverlap(c0)) {
                     c0.bounceOff(c, circles);
                 }
+
+//                if (c0.isStopped()) {
+//                    if (c0.isAboveLeft(c)) {
+//                        c.setVel(-1, c.getYvel());
+//                    } else if (c0.isAboveRight(c)) {
+//                        c.setVel(1, c.getYvel());
+//                    }
+//                }
+
             }
         }
+    }
+
+    public void rollOff() {
+        Circle c = circles.get(0);
+        Circle c0 = circles.get(1);
+
+//        d += .02;
+
+        c0.roll(c);
+
+
+//        if (c.isAboveLeft(c0)) {
+//            c.rollLeft(c0);
+//        }
+//        else if (this.isAboveRight(c0)) {
+//            System.out.println(id);
+//            this.rollRight(c0);
+//        } else if (this.isBelowLeft(c0)) {
+//            System.out.println(c0.id);
+//            c0.rollRight(this);
+//        } else if (this.isBelowRight(c0)) {
+//            System.out.println(c0.id);
+//            c0.rollLeft(this);
+//        }
+    }
+
+    // EFFECTS: returns true if given data overlaps with any circle
+    private boolean checkOverlap(int xpos, int ypos, int diam) {
+        for (Circle c : circles) {
+            if (c.overlaps(xpos, ypos, diam)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // MODIFIES: this
     // EFFECTS: adds new circle to sandbox with all random values
     public void addCircle() {
         int diam = rand.nextInt(201) + 50;
+        int xpos = rand.nextInt(width - diam);
+        int ypos = rand.nextInt(height - diam);
 
-        circles.add(new Circle(rand.nextInt(width - diam), rand.nextInt(height - diam),
-                rand.nextInt(21) - 10, rand.nextInt(21) - 10,
+        while (checkOverlap(xpos, ypos, diam)) {
+            diam = rand.nextInt(201) + 50;
+            xpos = rand.nextInt(width - diam);
+            ypos = rand.nextInt(height - diam);
+        }
+
+        circles.add(new Circle(xpos, ypos, rand.nextInt(21) - 10, rand.nextInt(21) - 10,
                 diam, new Color((int) (Math.random() * 0x1000000)), id, true));
 
         id++;

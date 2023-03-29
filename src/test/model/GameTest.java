@@ -48,6 +48,16 @@ class GameTest {
     }
 
     @Test
+    void testAddCircleUntilOverlaps() {
+        int i;
+        for (i = 0; i < 200; i++) {
+            game.addCircle();
+        }
+
+        assertEquals(i + 2, game.getCircles().size());
+    }
+
+    @Test
     void testAddCircleGivenCircle() {
         Circle c = new Circle(1, 1, 1, 1, 1, Color.RED, 1, true);
         game.addCircle(c);

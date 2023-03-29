@@ -4,37 +4,27 @@
         "width": 2560,
         "circles": [
             {
-                "ypos": 1311,
-                "xpos": 697,
-                "color": -452174,
-                "id": 5,
+                "ypos": 824,
+                "xpos": 691,
+                "color": -11612030,
+                "id": 20,
                 "accelerating": true,
-                "yvel": 5,
-                "xvel": -14,
-                "diam": 90
+                "yvel": 1,
+                "xvel": 0,
+                "diam": 588
             },
             {
-                "ypos": 845,
-                "xpos": 1479,
-                "color": -8639367,
-                "id": 7,
+                "ypos": 1194,
+                "xpos": 1249,
+                "color": -9751759,
+                "id": 21,
                 "accelerating": true,
-                "yvel": 10,
-                "xvel": 6,
-                "diam": 243
-            },
-            {
-                "ypos": 1071,
-                "xpos": 1178,
-                "color": -380487,
-                "id": 8,
-                "accelerating": true,
-                "yvel": 11,
-                "xvel": -6,
-                "diam": 238
+                "yvel": 1,
+                "xvel": 0,
+                "diam": 218
             }
         ],
-        "id": 9,
+        "id": 26,
         "height": 1412
     }
 }

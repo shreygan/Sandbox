@@ -62,6 +62,14 @@ public class ActionHandler {
             panel.loadGame();
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             panel.togglePause();
+        } else if (e.getKeyCode() == KeyEvent.VK_T) {
+            game.rollOff();
+
+//            game.addCircle(new Point(1000, 500), 0, 0, 200);
+//            game.addCircle(new Point(2000, 750), -15, 0, 250);
+//
+//            game.addCircle(new Point(250, 100), 0, 15, 250);
+//            game.addCircle(new Point(800, 750), -5, -5, 250);
         }
 
         if (!panel.isRunning() && e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -86,6 +94,12 @@ public class ActionHandler {
     // EFFECTS: sets current position of mouse
     public void mouseMoved(MouseEvent e) {
         mousePos = e.getPoint();
+
+//        Circle c = game.overlaps(mousePos);
+//        if (c != null) {
+//            System.out.print("c.getXvel(): " + c.getXvel());
+//            System.out.println("  c.getYvel(): " + c.getYvel());
+//        }
     }
 
     // MODIFIES: this
@@ -143,6 +157,8 @@ public class ActionHandler {
             mouseDragTime = System.currentTimeMillis();
             mouseOnCircle = true;
         } else {
+            game.setCircleDragged(null);
+
             mousePressed = true;
         }
     }

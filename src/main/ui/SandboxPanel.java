@@ -79,6 +79,54 @@ public class SandboxPanel extends JPanel
             g.setColor(Color.WHITE);
             g.drawString(c.getId() + "", (int) (c.getXpos() + c.getRad()), (int) (c.getYpos() + c.getRad()));
         }
+
+        int innerDiam = 200;
+        int innerRad = 100;
+        int outerDiam = 200;
+        int outerRad = 100;
+
+//        g.setColor(Color.WHITE);
+//        g.fillOval(1000, 500, innerDiam, innerDiam);
+//
+//        g.setColor(Color.BLUE);
+//
+//        Point p2 = test2(p.x, p.y, d, innerDiam);
+////        g.fillOval(p2.x, p2.y, outerDiam, outerDiam);
+//
+//        System.out.println(p2);
+
+//        d += .01;
+
+//        Point p2 = test2(p.x, p.y, 3.14, innerDiam);
+
+//        g.fillOval(p.x + (int) (Math.sin(d) * (innerRad - outerRad)),
+//                p.y + (int) (Math.cos(d) * (innerRad - outerRad)), outerDiam, outerDiam);
+
+
+
+//        d += .01;
+
+//        g.setColor(Color.GREEN);
+//        p = test2(1000, 500, 3.14 / 2, innerDiam);
+//        g.fillOval(p.x + (int) (Math.sin(3.14 / 2) * (innerRad - outerRad)),
+//                p.y + (int) (Math.cos(3.14 / 2) * (innerRad - outerRad)), outerDiam, outerDiam);
+//
+//        g.setColor(Color.RED);
+//        p = test2(1000, 500, 3.14, innerDiam);
+//        g.fillOval(p.x - (int) (Math.cos(3.14) * (innerRad - outerRad)),
+//                p.y - (int) (Math.cos(3.14) * (innerRad - outerRad)), outerDiam, outerDiam);
+//
+//        g.setColor(Color.YELLOW);
+//        p = test2(1000, 500, 3.14 * 1.5, innerDiam);
+//        g.fillOval(p.x - (int) (Math.sin(3.14 * 1.5) * (innerRad - outerRad)),
+//                p.y + (int) (Math.cos(3.14 * 1.5) * (innerRad - outerRad)), outerDiam, outerDiam);
+    }
+
+    private Point test2(int x, int y, double rad, int radius) {
+        int nx = (int) (x + (Math.cos(rad) * radius));
+        int ny = (int) (y + (Math.sin(rad) * radius));
+
+        return new Point(nx, ny);
     }
 
     // REQUIRES: mousePressed true, mouseDragCurr mouseDragInit mouseColor != null
@@ -91,8 +139,6 @@ public class SandboxPanel extends JPanel
 
         g.fillOval(actionHandler.getMouseDragInit().x - dim / 2,
                 actionHandler.getMouseDragInit().y - dim / 2, dim, dim);
-
-        System.out.println("DRAGGING");
     }
 
     // MODIFIES: this
