@@ -1,13 +1,9 @@
-package persistence;
+package ui;
 
 import model.Circle;
 import model.Game;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import ui.ActionHandler;
-import ui.GraphicsHandler;
-import ui.Sandbox;
-import ui.SandboxPanel;
 
 import java.awt.*;
 import java.io.FileInputStream;

@@ -1,5 +1,6 @@
 package model;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -509,5 +510,19 @@ public class CircleTest {
         assertEquals(Color.RED, c.getColor());
         assertEquals(10 / 2f, c.getRad());
         assertEquals(1, c.getId());
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject json = c.toJson();
+
+        assertEquals(500, json.getInt("xpos"));
+        assertEquals(500, json.getInt("ypos"));
+        assertEquals(1, json.getInt("xvel"));
+        assertEquals(1, json.getInt("yvel"));
+        assertEquals(10, json.getInt("diam"));
+        assertEquals(Color.RED.getRGB(), json.getInt("color"));
+        assertEquals(1, json.getInt("id"));
+        assertTrue(json.getBoolean("accelerating"));
     }
 }

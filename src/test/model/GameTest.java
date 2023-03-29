@@ -1,8 +1,11 @@
 package model;
 
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.awt.*;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,6 +40,13 @@ class GameTest {
         assertEquals(3, game.getId());
         game.setId(100);
         assertEquals(100, game.getId());
+    }
+
+    @Test
+    void testSetDimension() {
+        game.setDimension(13, 23);
+        assertEquals(13, game.getWidth());
+        assertEquals(23, game.getHeight());
     }
 
     @Test
@@ -450,5 +460,14 @@ class GameTest {
         assertEquals(game.getHeight() - 25, c.getYpos());
         assertEquals(0, c.getXvel());
         assertEquals((int) (-20 * (1 / Circle.Y_COEFFICENT) + Circle.YACC), c.getYvel());
+    }
+
+    @Test
+    void testToJson() {
+        JSONObject json = game.toJson();
+
+        assertEquals(1000, json.getInt("width"));
+        assertEquals(1000, json.getInt("height"));
+        assertEquals(3, json.getInt("id"));
     }
 }

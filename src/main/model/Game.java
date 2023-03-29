@@ -2,7 +2,7 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import persistence.Writeable;
+import ui.Writeable;
 
 import java.awt.*;
 import java.util.ArrayList;

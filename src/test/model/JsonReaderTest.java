@@ -2,7 +2,7 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.JsonReader;
+import ui.JsonReader;
 import ui.Sandbox;
 import ui.SandboxPanel;
 
@@ -37,7 +37,6 @@ public class JsonReaderTest {
 
         try {
             SandboxPanel panel = reader.read(sandbox);
-
 
             assertTrue(panel.isRunning());
             assertEquals(0, panel.getGame().getCircles().size());

@@ -2,8 +2,8 @@ package model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import persistence.JsonReader;
-import persistence.JsonWriter;
+import ui.JsonReader;
+import ui.JsonWriter;
 import ui.Sandbox;
 import ui.SandboxPanel;
 
