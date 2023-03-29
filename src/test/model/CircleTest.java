@@ -274,7 +274,7 @@ public class CircleTest {
     @Test
     void testWillOverlapNotOverlapping2() {
         Circle c1 = new Circle(500, 500, 0, 0, 10, Color.RED, 1, true);
-        Circle c2 = new Circle(516, 500, 0, 0, 10, Color.RED, 1, true);
+        Circle c2 = new Circle(505, 500, 0, 0, -10, Color.RED, 1, true);
 
         assertFalse(c1.willOverlap(c2));
     }
@@ -296,9 +296,9 @@ public class CircleTest {
     @Test
     void testNotOverlapsCircle2() {
         Circle c1 = new Circle(500, 500, 0, 0, 10, Color.RED, 1, true);
-        Circle c2 = new Circle(516, 500, 0, 0, 10, Color.RED, 1, true);
+        Circle c2 = new Circle(505, 500, 0, 0, -10, Color.RED, 1, true);
 
-        assertFalse(c1.willOverlap(c2));
+        assertFalse(c1.overlaps(c2));
     }
 
     @Test
@@ -502,7 +502,7 @@ public class CircleTest {
         assertFalse(c2.isBelowRight(c1));
 
         c2 = new Circle(400, 600, 0, 0, 25, Color.RED, 2, true);
-        assertFalse(c2.isAboveRight(c1));
+        assertFalse(c2.isBelowRight(c1));
     }
 
     @Test
