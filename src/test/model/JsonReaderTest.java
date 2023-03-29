@@ -1,8 +1,8 @@
-package persistence;
+package model;
 
-import model.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import persistence.JsonReader;
 import ui.Sandbox;
 import ui.SandboxPanel;
 

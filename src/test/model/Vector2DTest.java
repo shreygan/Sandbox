@@ -70,5 +70,10 @@ public class Vector2DTest {
         v2.setVx(1);
         assertNotEquals(v1, v2);
         assertNotEquals(v1.hashCode(), v2.hashCode());
+
+        v2.setVx(12);
+        v2.setVy(2345);
+        assertNotEquals(v1, v2);
+        assertNotEquals(v1.hashCode(), v2.hashCode());
     }
 }

@@ -264,10 +264,18 @@ public class CircleTest {
     }
 
     @Test
-    void testWillOverlapNotOverlapping() {
+    void testWillOverlapNotOverlapping1() {
         Circle c2 = new Circle(525, 500, 1, 1, 10, Color.RED, 1, true);
 
         assertFalse(c.willOverlap(c2));
+    }
+
+    @Test
+    void testWillOverlapNotOverlapping2() {
+        Circle c1 = new Circle(500, 500, 0, 0, 10, Color.RED, 1, true);
+        Circle c2 = new Circle(516, 500, 0, 0, 10, Color.RED, 1, true);
+
+        assertFalse(c1.willOverlap(c2));
     }
 
     @Test
@@ -278,10 +286,18 @@ public class CircleTest {
     }
 
     @Test
-    void testNotOverlapsCircle() {
+    void testNotOverlapsCircle1() {
         Circle c2 = new Circle(525, 500, 1, 1, 10, Color.RED, 1, true);
 
         assertFalse(c.overlaps(c2));
+    }
+
+    @Test
+    void testNotOverlapsCircle2() {
+        Circle c1 = new Circle(500, 500, 0, 0, 10, Color.RED, 1, true);
+        Circle c2 = new Circle(516, 500, 0, 0, 10, Color.RED, 1, true);
+
+        assertFalse(c1.willOverlap(c2));
     }
 
     @Test
@@ -454,6 +470,38 @@ public class CircleTest {
         assertEquals(490, c1.getYpos());
         assertEquals((int) (v2.getVx() * Circle.BOUNCE_COEFFICENT), c1.getXvel());
         assertEquals((int) (v2.getVy() * Circle.BOUNCE_COEFFICENT), c1.getYvel());
+    }
+
+    @Test
+    void testIsAboveRight() {
+        Circle c1 = new Circle(500, 500, 0, 0, 25, Color.RED, 2, true);
+        Circle c2 = new Circle(600, 400, 0, 0, 25, Color.RED, 2, true);
+        assertTrue(c2.isAboveRight(c1));
+
+        c2 = new Circle(400, 400, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isAboveRight(c1));
+
+        c2 = new Circle(600, 600, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isAboveRight(c1));
+
+        c2 = new Circle(400, 600, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isAboveRight(c1));
+    }
+
+    @Test
+    void testIsBelowRight() {
+        Circle c1 = new Circle(500, 500, 0, 0, 25, Color.RED, 2, true);
+        Circle c2 = new Circle(600, 600, 0, 0, 25, Color.RED, 2, true);
+        assertTrue(c2.isBelowRight(c1));
+
+        c2 = new Circle(400, 400, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isBelowRight(c1));
+
+        c2 = new Circle(600, 400, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isBelowRight(c1));
+
+        c2 = new Circle(400, 600, 0, 0, 25, Color.RED, 2, true);
+        assertFalse(c2.isAboveRight(c1));
     }
 
     @Test

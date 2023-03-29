@@ -352,6 +352,30 @@ class GameTest {
     }
 
     @Test
+    void testTickCircleCollisionCircleDragged() {
+        game.deleteCircles();
+
+        Circle c1 = new Circle(game.getWidth() / 2 - 30, game.getHeight() - 30,
+                10, 0, 25, Color.RED, 3, true);
+
+        Circle c2 = new Circle(game.getWidth() / 2 + 30, game.getHeight() - 30,
+                -10, 0, 25, Color.BLUE, 4, true);
+
+        game.addCircle(c1);
+        game.addCircle(c2);
+        game.setCircleDragged(c1);
+        game.tick();
+
+        assertEquals(game.getHeight() - 30, c1.getYpos());
+        assertEquals(-8, c1.getXvel());
+        assertEquals(0, c1.getYvel());
+
+        assertEquals(game.getHeight() - 30, c2.getYpos());
+        assertEquals(8, c2.getXvel());
+        assertEquals(0, c2.getYvel());
+    }
+
+    @Test
     void testUntickNoCollisions() {
         int c1X = c1.prevX();
         int c1Y = c1.prevY();
