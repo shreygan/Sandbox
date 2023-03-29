@@ -51,4 +51,24 @@ public class Vector2DTest {
         assertEquals(v1.getVx(), 12 * 23);
         assertEquals(v1.getVy(), 24 * 23);
     }
+
+    @Test
+    void testToString() {
+        assertEquals(" vx: " + v1.getVx() + ", vy: " + v1.getVy(), v1.toString());
+    }
+
+    @Test
+    void testEquals() {
+        Vector2D v2 = new Vector2D(12, 24);
+
+        assertEquals(v1, v1);
+        assertEquals(v1.hashCode(), v1.hashCode());
+        assertNotEquals(v1, "v1");
+        assertEquals(v1, v2);
+        assertEquals(v1.hashCode(), v2.hashCode());
+
+        v2.setVx(1);
+        assertNotEquals(v1, v2);
+        assertNotEquals(v1.hashCode(), v2.hashCode());
+    }
 }

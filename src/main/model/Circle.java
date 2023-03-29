@@ -4,8 +4,6 @@ import org.json.JSONObject;
 import persistence.Writeable;
 
 import java.awt.*;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 // Represents a circle with positions, velocities, diameter, color, and id
 public class Circle implements Writeable {
@@ -19,9 +17,6 @@ public class Circle implements Writeable {
     private int xpos;
     private int ypos;
 
-    private int prevxpos;
-    private int prevypos;
-
     private int xvel;
     private int yvel;
 
@@ -32,15 +27,11 @@ public class Circle implements Writeable {
     private boolean accelerating;
 
     private double rollAngle;
-    private double rollCount;
 
     // EFFECTS: initalizes new circle with all given variables
     public Circle(int xpos, int ypos, int xvel, int yvel, int diam, Color color, int id, boolean accelerating) {
         this.xpos = xpos;
         this.ypos = ypos;
-
-        this.prevxpos = 0;
-        this.prevypos = 0;
 
         this.xvel = xvel;
         this.yvel = yvel;
@@ -52,7 +43,6 @@ public class Circle implements Writeable {
         this.accelerating = accelerating;
 
         this.rollAngle = 0;
-        this.rollCount = 1;
     }
 
     // EFFECTS: returns next x position
@@ -60,17 +50,24 @@ public class Circle implements Writeable {
         return xpos + xvel;
     }
 
+    // EFFECTS: returns previous x position
+    public int prevX() {
+        return xpos - xvel;
+    }
+
     // EFFECTS: returns next y position
     public int nextY() {
         return ypos + yvel;
     }
 
+    // EFFECTS: returns previous y position
+    public int prevY() {
+        return ypos - yvel;
+    }
+
     // MODIFIES: this
     // EFFECTS: sets x and y positions to given variables
     public void setPos(int xpos, int ypos) {
-        prevxpos = this.xpos;
-        prevypos = this.ypos;
-
         this.xpos = xpos;
         this.ypos = ypos;
     }
@@ -98,25 +95,25 @@ public class Circle implements Writeable {
 
     // MODIFIES: this
     // EFFECTS: updates x and y positions based on x and y velocities
-    public void updatePos() {
+    public void tickPos() {
         if (accelerating) {
-            prevxpos = this.xpos;
-            prevypos = this.ypos;
-
             this.xpos += this.xvel;
             this.ypos += this.yvel;
+        }
+    }
 
-//            if (prevxpos == xpos && prevypos == ypos) {
-//                stopped = true;
-//            } else {
-//                stopped = false;
-//            }
+    // MODIFIES: this
+    // EFFECTS: reverses x and y positions to positions on previous tick
+    public void untickPos() {
+        if (accelerating) {
+            this.xpos -= this.xvel;
+            this.ypos -= this.yvel;
         }
     }
 
     // MODIFIES: this
     // EFFECTS: updates x velocity
-    public void updateXVel() {
+    public void tickXVel() {
         if (accelerating) {
             if (xvel > 10 || xvel < -10) {
                 xvel *= BOUNCE_COEFFICENT;
@@ -131,11 +128,41 @@ public class Circle implements Writeable {
     }
 
     // MODIFIES: this
+    // EFFECTS: reverses x velocity to vel on previous tick
+    public void untickXVel() {
+        if (accelerating) {
+            if (xvel > 10 || xvel < -10) {
+                xvel *= 1 / BOUNCE_COEFFICENT;
+            } else {
+                if (xvel > 0) {
+                    xvel += XACC;
+                } else if (xvel < 0) {
+                    xvel -= XACC;
+                }
+            }
+        }
+    }
+
+    // MODIFIES: this
     // EFFECTS: updates y velocity
-    public void updateYVel() {
+    public void tickYVel() {
         if (accelerating) {
             yvel += YACC;
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: revers y velocity to vel on previous tick
+    public void untickYVel() {
+        if (accelerating) {
+            yvel -= YACC;
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: simulates bouncing off side boundaries
+    public void bounceX() {
+        this.xvel *= -1;
     }
 
     // MODIFIES: this
@@ -149,9 +176,9 @@ public class Circle implements Writeable {
     }
 
     // MODIFIES: this
-    // EFFECTS: simulates bouncing off side boundaries
-    public void bounceX() {
-        this.xvel *= -1;
+    // EFFECTS: simulates bouncing off ground or ceiling in reverse
+    public void reverseBounceY() {
+        this.yvel *= 1 / Y_COEFFICENT;
     }
 
     // EFFECTS: returns true if given circle will overlap this circle on next tick
@@ -181,7 +208,7 @@ public class Circle implements Writeable {
                 <= Math.pow(getRad(), 2);
     }
 
-    // EFFECTS: returns center of this on next tick
+    // EFFECTS: returns center of this on prev next tick
     private Point getNextCenter() {
         int x = nextX() + (diam / 2);
         int y = nextY() + (diam / 2);
@@ -192,18 +219,18 @@ public class Circle implements Writeable {
     // REQUIRES: c0 != null
     // MODIFIES: this, c0
     // EFFECTS: simulates c0 and this circle bouncing off each other
-    public void bounceOff(Circle c0, ArrayList<Circle> circles) {
+    public void bounceOff(Circle c0) {
         Point thisCenter = this.getCenter();
         Point c0Center = c0.getCenter();
 
-        double angle = Math.atan2(c0Center.y - thisCenter.y, c0Center.x - thisCenter.x);
+        double angle1 = Math.atan2(c0Center.y - thisCenter.y, c0Center.x - thisCenter.x);
         double angle2 = Math.atan2(thisCenter.y - c0Center.y, thisCenter.x - c0Center.x);
 
         Vector2D thisVel = new Vector2D(this.xvel, this.yvel);
         Vector2D c0Vel = new Vector2D(c0.xvel, c0.yvel);
 
-        thisVel.rotateClockwise(angle);
-        c0Vel.rotateClockwise(angle);
+        thisVel.rotateClockwise(angle1);
+        c0Vel.rotateClockwise(angle1);
 
         // from 1D elastic collision equation
         double thisNewV1 = ((thisVel.getVx() * (this.diam - c0.diam)) + (2 * c0.diam * c0Vel.getVx()))
@@ -214,36 +241,8 @@ public class Circle implements Writeable {
         thisVel.setVx(thisNewV1);
         c0Vel.setVx(c0NewV1);
 
-        thisVel.rotateCounterClockwise(angle);
-        c0Vel.rotateCounterClockwise(angle);
-
-//        System.out.println(id + "    " + Math.toDegrees(angle));
-
-//        if (thisVel.equals(velCopy)) {
-//            if (this.isAboveLeft(c0)) {
-//                System.out.println("ABOVE LEFT");
-//                rollAngle = angle;
-//                rollAngle -= ROLL_SPEED;
-//                this.rollLeft(c0);
-//            }
-//        }
-//            else if (this.isAboveRight(c0)) {
-//                System.out.println("ABOVE RIGHT");
-//                rollAngle = angle;
-//                rollAngle += ROLL_SPEED;
-//                this.rollRight(c0);
-//            } else if (this.isBelowLeft(c0)) {
-//                System.out.println("BELOW LEFT");
-//                c0.rollAngle = angle;
-//                c0.rollAngle -= ROLL_SPEED;
-//                c0.rollRight(this);
-//            } else if (this.isBelowRight(c0)) {
-//                System.out.println("BELOW RIGHT");
-//                c0.rollAngle = angle;
-//                c0.rollAngle += ROLL_SPEED;
-//                c0.rollLeft(this);
-//            }
-//        }
+        thisVel.rotateCounterClockwise(angle1);
+        c0Vel.rotateCounterClockwise(angle1);
 
         thisVel.multiplyBy(BOUNCE_COEFFICENT);
         c0Vel.multiplyBy(BOUNCE_COEFFICENT);
@@ -252,35 +251,74 @@ public class Circle implements Writeable {
         c0.setVel(c0Vel);
 
         this.distanceFrom(c0);
+        handleRoll(c0, angle1, angle2);
+    }
 
+    // REQUIRES: c0 != null
+    // MODIFIES: this
+    // EFFECTS: handles moving this circle and c0 closer together until overlapping
+    public void distanceFrom(Circle c0) {
         if (this.isAboveLeft(c0)) {
-//            System.out.println("1 ABOVE LEFT 2    " + id);
-            rollAngle = angle2;
+            pushTowards(c0, true, true);
+        } else if (this.isAboveRight(c0)) {
+            pushTowards(c0, false, true);
+        } else if (this.isBelowLeft(c0)) {
+            pushTowards(c0, true, false);
+        } else if (this.isBelowRight(c0)) {
+            pushTowards(c0, false, false);
+        }
+    }
 
+    // REQUIRES: c0 != null
+    // MODIFIES: this, c0
+    // EFFECTS: moves this circle and c0 closer together until overlapping
+    private void pushTowards(Circle c0, boolean sign1, boolean sign2) {
+        while (!this.overlaps(c0)) {
+            if (sign1) {
+                this.xpos += 1;
+                c0.xpos -= 1;
+            } else {
+                this.xpos -= 1;
+                c0.xpos += 1;
+            }
+
+            if (sign2) {
+                this.ypos += 1;
+                c0.ypos -= 1;
+            } else {
+                this.ypos -= 1;
+                c0.ypos += 1;
+            }
+        }
+    }
+
+    // REQUIRES: c0 != null
+    // MODIFIES: this, c0
+    // EFFECTS: simulates c0 and this circle rolling off each other
+    private void handleRoll(Circle c0, double angle1, double angle2) {
+        if (this.isAboveLeft(c0)) {
+            rollAngle = angle2;
             rollAngle -= ROLL_ACC;
             this.roll(c0);
         } else if (this.isAboveRight(c0)) {
-//            System.out.println("1 ABOVE RIGHT 2   " + id);
             rollAngle = angle2;
             rollAngle += ROLL_ACC;
             roll(c0);
         } else if (c0.isAboveLeft(this)) {
-//            System.out.println("2 ABOVE LEFT 1   " + id);
-            c0.rollAngle = angle;
+            c0.rollAngle = angle1;
             c0.rollAngle -= ROLL_ACC;
             c0.roll(this);
         } else if (c0.isAboveRight(this)) {
-//            System.out.println("2 ABOVE RIGHT 1   " + id);
-            c0.rollAngle = angle;
-//            System.out.println("rollCount: " + rollCount);
-//            System.out.println("angle: " + angle);
-//            System.out.println();
+            c0.rollAngle = angle1;
             c0.rollAngle += ROLL_ACC;
             c0.roll(this);
         }
     }
 
-    public void roll(Circle c0) {
+    // REQUIRES: c0 != null
+    // MODIFIES: this
+    // EFFECTS: sets new position after this circle 'rolls' off c0
+    private void roll(Circle c0) {
         Point center = c0.getCenter();
 
         int tempX = (int) (center.x + (Math.cos(rollAngle) * (c0.getRad() + this.getRad())));
@@ -289,81 +327,28 @@ public class Circle implements Writeable {
         this.setPos(new Point(tempX, tempY));
     }
 
-    // EFFECTS:
-    public void distanceFrom(Circle c0) {
-        if (this.isAbove(c0)) {
-            if (this.isLeftOf(c0)) {
-                while (!this.overlaps(c0)) {
-                    this.xpos += 1;
-                    this.ypos += 1;
-
-                    c0.xpos -= 1;
-                    c0.ypos -= 1;
-                }
-            } else if (this.isRightOf(c0)) {
-                while (!this.overlaps(c0)) {
-                    this.xpos -= 1;
-                    this.ypos += 1;
-
-                    c0.xpos += 1;
-                    c0.ypos -= 1;
-                }
-            }
-        } else if (this.isBelow(c0)) {
-            if (this.isLeftOf(c0)) {
-                while (!this.overlaps(c0)) {
-                    this.xpos += 1;
-                    this.ypos -= 1;
-
-                    c0.xpos -= 1;
-                    c0.ypos += 1;
-                }
-            } else if (this.isRightOf(c0)) {
-                while (!this.overlaps(c0)) {
-                    this.xpos -= 1;
-                    this.ypos -= 1;
-
-                    c0.xpos += 1;
-                    c0.ypos += 1;
-                }
-            }
-        }
-    }
-
+    // EFFECTS: returns true if this circle is above and left of c0
     public boolean isAboveLeft(Circle c0) {
-        return this.isAbove(c0) && this.isLeftOf(c0);
+        return this.getCenter().y < c0.getCenter().y && this.getCenter().x < c0.getCenter().x;
     }
 
+    // EFFECTS: returns true if this circle is above and right of c0
     public boolean isAboveRight(Circle c0) {
-        return this.isAbove(c0) && this.isRightOf(c0);
+        return this.getCenter().y < c0.getCenter().y && this.getCenter().x > c0.getCenter().x;
     }
 
+    // EFFECTS: returns true if this circle is below and left of c0
     public boolean isBelowLeft(Circle c0) {
-        return this.isBelow(c0) && this.isLeftOf(c0);
+        return this.getCenter().y > c0.getCenter().y && this.getCenter().x < c0.getCenter().x;
     }
 
+    // EFFECTS: returns true if this circle is below and right of c0
     public boolean isBelowRight(Circle c0) {
-        return this.isBelow(c0) && this.isRightOf(c0);
-    }
-
-    private boolean isAbove(Circle c0) {
-        return this.getCenter().y < c0.getCenter().y;
-    }
-
-    private boolean isBelow(Circle c0) {
-        return this.getCenter().y > c0.getCenter().y;
-    }
-
-    private boolean isLeftOf(Circle c0) {
-        return this.getCenter().x < c0.getCenter().x;
-    }
-
-    private boolean isRightOf(Circle c0) {
-        return this.getCenter().x > c0.getCenter().x;
+        return this.getCenter().y > c0.getCenter().y && this.getCenter().x > c0.getCenter().x;
     }
 
     // EFFECTS: returns center of this circle
-    private Point getCenter() {
+    public Point getCenter() {
         int x = xpos + (diam / 2);
         int y = ypos + (diam / 2);
 

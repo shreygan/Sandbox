@@ -1,17 +1,55 @@
 package ui;
 
+import model.Circle;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public class GuiHandler {
+// Handles all graphical elements for SandboxPanel
+public class GraphicsHandler {
 
-    private JPanel panel;
+    private SandboxPanel panel;
     private GridBagConstraints gbc;
 
-    public GuiHandler(JPanel panel, GridBagConstraints gbc) {
+    // REQUIRES: panel has grid bag layout
+    // EFFECTS: initalizes new graphics handler for given panel and gbc
+    public GraphicsHandler(SandboxPanel panel, GridBagConstraints gbc) {
         this.panel = panel;
         this.gbc = gbc;
+    }
+
+    // REQUIRES: g != null and is graphics object for panel
+    // MODIFIES: this, g
+    // EFFECTS:
+    public void paintComponent(Graphics g) {
+        ActionHandler actionHandler = panel.getActionHandler();
+
+        if (actionHandler.getMouseDragInit() != null
+                && actionHandler.getMouseDragCurr() != null
+                && actionHandler.getMouseDragInit().y < actionHandler.getMouseDragCurr().y
+                && actionHandler.isMousePressed()) {
+            paintMouseDragged(g, actionHandler);
+        }
+
+        for (Circle c : panel.getGameCircles()) {
+            g.setColor(c.getColor());
+            g.fillOval(c.getXpos(), c.getYpos(), c.getDiam(), c.getDiam());
+            g.setColor(Color.WHITE);
+            g.drawString(c.getId() + "", (int) (c.getXpos() + c.getRad()), (int) (c.getYpos() + c.getRad()));
+        }
+    }
+
+    // REQUIRES: mousePressed true, mouseDragCurr mouseDragInit mouseColor != null
+    // MODIFIES: this
+    // EFFECTS: displays preview of circle created by mouse drag
+    private void paintMouseDragged(Graphics g, ActionHandler actionHandler) {
+        g.setColor(actionHandler.getMouseColor());
+
+        int diam = (actionHandler.getMouseDragCurr().y - actionHandler.getMouseDragInit().y) * 2;
+
+        g.fillOval(actionHandler.getMouseDragInit().x - diam / 2,
+                actionHandler.getMouseDragInit().y - diam / 2, diam, diam);
     }
 
     // REQUIRES: panel != null and gbc != null

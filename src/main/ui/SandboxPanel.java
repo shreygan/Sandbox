@@ -8,8 +8,9 @@ import persistence.Writeable;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
+import java.util.ArrayList;
 
+// JPanel for Sandbox
 public class SandboxPanel extends JPanel
         implements KeyListener, MouseMotionListener, MouseListener, ComponentListener, Writeable {
 
@@ -17,32 +18,30 @@ public class SandboxPanel extends JPanel
 
     private Sandbox sandbox;
     private Game game;
-    private GuiHandler guiHandler;
+    private GraphicsHandler graphicsHandler;
     private ActionHandler actionHandler;
 
-    // EFFECTS: Initialze new JPanel for sandbox with corresponding listeners
+    // EFFECTS: initialze new JPanel for sandbox with corresponding listeners
     public SandboxPanel(Sandbox sandbox) {
         super(new GridBagLayout());
 
         running = true;
 
-        Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-
         this.sandbox = sandbox;
-        this.game = new Game(d);
-        this.guiHandler = new GuiHandler(this, new GridBagConstraints());
+        this.game = new Game(Toolkit.getDefaultToolkit().getScreenSize());
+        this.graphicsHandler = new GraphicsHandler(this, new GridBagConstraints());
         this.actionHandler = new ActionHandler(this, this.game);
 
-        guiHandler.addPauseButton().addActionListener(e -> togglePause());
-        guiHandler.addSaveButton().addActionListener(e -> this.sandbox.saveGame());
-        guiHandler.addLoadButton().addActionListener(e -> this.sandbox.loadGame());
-        guiHandler.addDeleteButton().addActionListener(e -> game.deleteCircles());
-        guiHandler.addRelaunchButton().addActionListener(e -> game.relaunchCircles());
-        guiHandler.addNewCircleButton().addActionListener(e -> game.addCircle());
-        guiHandler.addSpacing();
+        graphicsHandler.addPauseButton().addActionListener(e -> togglePause());
+        graphicsHandler.addSaveButton().addActionListener(e -> this.sandbox.saveGame());
+        graphicsHandler.addLoadButton().addActionListener(e -> this.sandbox.loadGame());
+        graphicsHandler.addDeleteButton().addActionListener(e -> game.deleteCircles());
+        graphicsHandler.addRelaunchButton().addActionListener(e -> game.relaunchCircles());
+        graphicsHandler.addNewCircleButton().addActionListener(e -> game.addCircle());
+        graphicsHandler.addSpacing();
 
         setBackground(Color.BLACK);
-        setPreferredSize(d);
+        setPreferredSize(Toolkit.getDefaultToolkit().getScreenSize());
     }
 
     // MODIFIES: this
@@ -64,93 +63,19 @@ public class SandboxPanel extends JPanel
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-
-        if (actionHandler.getMouseDragInit() != null
-                && actionHandler.getMouseDragCurr() != null
-                && actionHandler.getMouseDragInit().y < actionHandler.getMouseDragCurr().y) {
-            if (actionHandler.isMousePressed()) {
-                paintMouseDragged(g);
-            }
-        }
-
-        for (Circle c : game.getCircles()) {
-            g.setColor(c.getColor());
-            g.fillOval(c.getXpos(), c.getYpos(), c.getDiam(), c.getDiam());
-            g.setColor(Color.WHITE);
-            g.drawString(c.getId() + "", (int) (c.getXpos() + c.getRad()), (int) (c.getYpos() + c.getRad()));
-        }
-
-        int innerDiam = 200;
-        int innerRad = 100;
-        int outerDiam = 200;
-        int outerRad = 100;
-
-//        g.setColor(Color.WHITE);
-//        g.fillOval(1000, 500, innerDiam, innerDiam);
-//
-//        g.setColor(Color.BLUE);
-//
-//        Point p2 = test2(p.x, p.y, d, innerDiam);
-////        g.fillOval(p2.x, p2.y, outerDiam, outerDiam);
-//
-//        System.out.println(p2);
-
-//        d += .01;
-
-//        Point p2 = test2(p.x, p.y, 3.14, innerDiam);
-
-//        g.fillOval(p.x + (int) (Math.sin(d) * (innerRad - outerRad)),
-//                p.y + (int) (Math.cos(d) * (innerRad - outerRad)), outerDiam, outerDiam);
-
-
-
-//        d += .01;
-
-//        g.setColor(Color.GREEN);
-//        p = test2(1000, 500, 3.14 / 2, innerDiam);
-//        g.fillOval(p.x + (int) (Math.sin(3.14 / 2) * (innerRad - outerRad)),
-//                p.y + (int) (Math.cos(3.14 / 2) * (innerRad - outerRad)), outerDiam, outerDiam);
-//
-//        g.setColor(Color.RED);
-//        p = test2(1000, 500, 3.14, innerDiam);
-//        g.fillOval(p.x - (int) (Math.cos(3.14) * (innerRad - outerRad)),
-//                p.y - (int) (Math.cos(3.14) * (innerRad - outerRad)), outerDiam, outerDiam);
-//
-//        g.setColor(Color.YELLOW);
-//        p = test2(1000, 500, 3.14 * 1.5, innerDiam);
-//        g.fillOval(p.x - (int) (Math.sin(3.14 * 1.5) * (innerRad - outerRad)),
-//                p.y + (int) (Math.cos(3.14 * 1.5) * (innerRad - outerRad)), outerDiam, outerDiam);
-    }
-
-    private Point test2(int x, int y, double rad, int radius) {
-        int nx = (int) (x + (Math.cos(rad) * radius));
-        int ny = (int) (y + (Math.sin(rad) * radius));
-
-        return new Point(nx, ny);
-    }
-
-    // REQUIRES: mousePressed true, mouseDragCurr mouseDragInit mouseColor != null
-    // MODIFIES: this
-    // EFFECTS: displays preview of circle created by mouse drag
-    private void paintMouseDragged(Graphics g) {
-        g.setColor(actionHandler.getMouseColor());
-
-        int dim = (actionHandler.getMouseDragCurr().y - actionHandler.getMouseDragInit().y) * 2;
-
-        g.fillOval(actionHandler.getMouseDragInit().x - dim / 2,
-                actionHandler.getMouseDragInit().y - dim / 2, dim, dim);
+        graphicsHandler.paintComponent(g);
     }
 
     // MODIFIES: this
     // EFFECTS: shows message dialogue on this with given message and title
     public void displayMessage(String title, String message) {
-        guiHandler.displayMessage(title, message);
+        graphicsHandler.displayMessage(title, message);
     }
 
     // MODIFIES: this
     // EFFECTS: displays new joptionpane for creating new circle
     public String getJOptionPane(MouseEvent e) {
-        return guiHandler.getJOptionPane(e);
+        return graphicsHandler.getJOptionPane(e);
     }
 
     // EFFECTS: saves current sandbox
@@ -275,6 +200,10 @@ public class SandboxPanel extends JPanel
         return json;
     }
 
+    public ArrayList<Circle> getGameCircles() {
+        return game.getCircles();
+    }
+
     public void setGame(Game game) {
         this.game = game;
     }
@@ -291,8 +220,8 @@ public class SandboxPanel extends JPanel
         return running;
     }
 
-    public void setGuiHandler(GuiHandler guiHandler) {
-        this.guiHandler = guiHandler;
+    public void setGuiHandler(GraphicsHandler graphicsHandler) {
+        this.graphicsHandler = graphicsHandler;
     }
 
     public ActionHandler getActionHandler() {

@@ -265,7 +265,7 @@ class GameTest {
 
         assertEquals(0, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (-20 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (-20 * Circle.Y_COEFFICENT), c.getYvel());
     }
 
     @Test
@@ -280,7 +280,7 @@ class GameTest {
 
         assertEquals(0, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (-6 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (-6 * Circle.Y_COEFFICENT), c.getYvel());
     }
 
     @Test
@@ -295,7 +295,7 @@ class GameTest {
 
         assertEquals(0, c.getXpos());
         assertEquals((int) (-20 * Circle.BOUNCE_COEFFICENT * -1), c.getXvel());
-        assertEquals(Circle.YACC, c.getYvel());
+        assertEquals(0, c.getYvel());
     }
 
     @Test
@@ -310,7 +310,7 @@ class GameTest {
 
         assertEquals(game.getWidth() - 25, c.getXpos());
         assertEquals((int) (20 * Circle.BOUNCE_COEFFICENT * -1), c.getXvel());
-        assertEquals(Circle.YACC, c.getYvel());
+        assertEquals(0, c.getYvel());
     }
 
     @Test
@@ -325,8 +325,106 @@ class GameTest {
 
         assertEquals(game.getHeight() - 25, c.getYpos());
         assertEquals(0, c.getXvel());
-        assertEquals((int) (20 * Circle.Y_COEFFICENT + Circle.YACC), c.getYvel());
+        assertEquals((int) (20 * Circle.Y_COEFFICENT), c.getYvel());
     }
 
+    @Test
+    void testTickCircleCollision() {
+        game.deleteCircles();
 
+        Circle c1 = new Circle(game.getWidth() / 2 - 30, game.getHeight() - 30,
+                10, 0, 25, Color.RED, 3, true);
+
+        Circle c2 = new Circle(game.getWidth() / 2 + 30, game.getHeight() - 30,
+                -10, 0, 25, Color.BLUE, 4, true);
+
+        game.addCircle(c1);
+        game.addCircle(c2);
+        game.tick();
+
+        assertEquals(game.getHeight() - 30, c1.getYpos());
+        assertEquals(-8, c1.getXvel());
+        assertEquals(0, c1.getYvel());
+
+        assertEquals(game.getHeight() - 30, c2.getYpos());
+        assertEquals(8, c2.getXvel());
+        assertEquals(0, c2.getYvel());
+    }
+
+    @Test
+    void testUntickNoCollisions() {
+        int c1X = c1.prevX();
+        int c1Y = c1.prevY();
+
+        int c2X = c2.prevX();
+        int c2Y = c2.prevY();
+
+        game.untick();
+
+        assertEquals(c1X, c1.getXpos());
+        assertEquals(c1Y, c1.getYpos());
+
+        assertEquals(c2X, c2.getXpos());
+        assertEquals(c2Y, c2.getYpos());
+    }
+
+    @Test
+    void testUntickRoofCollision() {
+        game.deleteCircles();
+
+        Circle c = new Circle(game.getWidth() / 2, 5,
+                0, 30, 25, Color.WHITE, 3, true);
+
+        game.addCircle(c);
+        game.untick();
+
+        assertEquals(0, c.getYpos());
+        assertEquals(0, c.getXvel());
+        assertEquals((int) (30 * (1 / Circle.Y_COEFFICENT) + Circle.YACC), c.getYvel());
+    }
+
+    @Test
+    void testUntickLeftCollision() {
+        game.deleteCircles();
+
+        Circle c = new Circle(5, game.getHeight() / 2,
+                20, 0, 25, Color.WHITE, 3, true);
+
+        game.addCircle(c);
+        game.untick();
+
+        assertEquals(0, c.getXpos());
+        assertEquals((int) (20 * (1 / Circle.BOUNCE_COEFFICENT) * -1), c.getXvel());
+        assertEquals(0, c.getYvel());
+    }
+
+    @Test
+    void testUntickRightCollision() {
+        game.deleteCircles();
+
+        Circle c = new Circle(game.getWidth() - 5, game.getHeight() / 2,
+                -20, 0, 25, Color.WHITE, 3, true);
+
+        game.addCircle(c);
+        game.untick();
+
+        assertEquals(game.getWidth() - 25, c.getXpos());
+        assertEquals((int) (-20 * (1 / Circle.BOUNCE_COEFFICENT) * -1), c.getXvel());
+        assertEquals(0, c.getYvel());
+    }
+
+    @Test
+    void testUntickGroundCollision() {
+        game.deleteCircles();
+
+        Circle c = new Circle(game.getWidth() / 2, game.getHeight() - 30,
+                0, -20, 25, Color.WHITE, 3, true);
+
+        game.addCircle(c);
+        game.untick();
+
+        assertEquals(game.getHeight() - 25, c.getYpos());
+        assertEquals(0, c.getXvel());
+        assertEquals((int) (-20 * (1 / Circle.Y_COEFFICENT) + Circle.YACC), c.getYvel());
+    }
 }

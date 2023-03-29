@@ -5,7 +5,7 @@ import model.Game;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import ui.ActionHandler;
-import ui.GuiHandler;
+import ui.GraphicsHandler;
 import ui.Sandbox;
 import ui.SandboxPanel;
 
@@ -46,11 +46,14 @@ public class JsonReader {
         Game g = makeGame(p, json.getJSONObject("game"));
 
         p.setGame(g);
-        p.setGuiHandler(new GuiHandler(p, new GridBagConstraints()));
+        p.setGuiHandler(new GraphicsHandler(p, new GridBagConstraints()));
         p.getActionHandler().removeAllListeners();
         p.setActionHandler(new ActionHandler(p, g));
     }
 
+    // REQUIRES: given JSONObject must represent a game with corresponding variables
+    // MODIFIES: p
+    // EFFECTS: parses given JSONObject as a game for sandboxpanel
     private Game makeGame(SandboxPanel p, JSONObject json) {
         Dimension d = new Dimension(json.getInt("width"), json.getInt("height"));
 

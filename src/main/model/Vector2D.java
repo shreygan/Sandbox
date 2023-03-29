@@ -1,5 +1,6 @@
 package model;
 
+// Represents a 2d vector with 2 values
 public class Vector2D  {
 
     private double vx;
@@ -70,6 +71,7 @@ public class Vector2D  {
         return " vx: " + vx + ", vy: " + vy;
     }
 
+    // EFFECTS: compares rounded vx and vy
     @Override
     public boolean equals(Object o) {
         if (this == o) {

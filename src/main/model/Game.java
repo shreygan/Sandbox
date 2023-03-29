@@ -23,8 +23,6 @@ public class Game implements Writeable {
 
     private Random rand;
 
-    private double d;
-
     // EFFECTS: initalizes new sandbox game
     public Game(Dimension dim) {
         width = dim.width;
@@ -40,102 +38,86 @@ public class Game implements Writeable {
     // EFFECTS: updates positions of all circles in sandbox
     public void tick() {
         for (Circle c : circles) {
-            updateCircleBorders(c);
-            updateCircleCollisions(c);
+            tickCircleBorders(c);
+            tickCircleCollisions(c);
         }
     }
 
     // MODIFIES: this
     // EFFECTS: "ticks" game in reverse
     public void untick() {
-        // TODO IMPLEMENT METHOD
+        for (Circle c : circles) {
+            untickCircleBorders(c);
+        }
     }
 
     // MODIFIES: this, c
     // EFFECTS: updates positions and velocities of all circles in sandbox,
     //          also processes circles hitting the boundaries
-    private void updateCircleBorders(Circle c) {
+    private void tickCircleBorders(Circle c) {
         if (c.nextY() + c.getDiam() > height) {
             c.setPos(c.nextX(), height - c.getDiam());
-            c.updateXVel();
+            c.tickXVel();
             c.bounceY();
         } else if (c.nextY() < 0) {
             c.setPos(c.nextX(), 0);
-            c.updateXVel();
+            c.tickXVel();
             c.bounceY();
         } else if (c.nextX() + c.getDiam() > width) {
             c.setPos(width - c.getDiam(), c.nextY());
-            c.updateXVel();
+            c.tickXVel();
             c.bounceX();
         } else if (c.nextX() < 0) {
             c.setPos(0, c.nextY());
-            c.updateXVel();
+            c.tickXVel();
             c.bounceX();
         } else {
-            c.updatePos();
+            c.tickPos();
+            c.tickYVel();
         }
-        c.updateYVel();
+    }
+
+    // MODIFIES: this, c
+    // EFFECTS: reverses positions and velocities of all circles in sandbox,
+    //          also processes circles hitting the boundaries
+    private void untickCircleBorders(Circle c) {
+        if (c.prevY() + c.getDiam() > height) {
+            c.setPos(c.prevX(), height - c.getDiam());
+            c.untickXVel();
+            c.untickYVel();
+            c.reverseBounceY();
+        } else if (c.prevY() < 0) {
+            c.setPos(c.prevX(), 0);
+            c.untickXVel();
+            c.untickYVel();
+            c.reverseBounceY();
+        } else if (c.prevX() + c.getDiam() > width) {
+            c.setPos(width - c.getDiam(), c.prevY());
+            c.untickXVel();
+            c.bounceX();
+        } else if (c.prevX() < 0) {
+            c.setPos(0, c.prevY());
+            c.untickXVel();
+            c.bounceX();
+        } else {
+            c.untickPos();
+            c.untickYVel();
+        }
     }
 
     // MODIFIES: this, c0
     // EFFECTS: checks if c0 will collide with any other circles in jpanel,
     //          and if they will, makes both bounce off
-    private void updateCircleCollisions(Circle c0) {
+    private void tickCircleCollisions(Circle c0) {
         if (c0 == circleDragged) {
             return;
         }
 
         for (Circle c : circles) {
-            if (c != c0) {
-                if (c.willOverlap(c0)) {
-                    c0.bounceOff(c, circles);
-                }
-
-//                if (c0.isStopped()) {
-//                    if (c0.isAboveLeft(c)) {
-//                        c.setVel(-1, c.getYvel());
-//                    } else if (c0.isAboveRight(c)) {
-//                        c.setVel(1, c.getYvel());
-//                    }
-//                }
-
+            if (c != c0 && c.willOverlap(c0)) {
+                c0.bounceOff(c);
             }
         }
-    }
-
-    public void rollOff() {
-        Circle c = circles.get(0);
-        Circle c0 = circles.get(1);
-
-//        d += .02;
-
-        c0.roll(c);
-
-
-//        if (c.isAboveLeft(c0)) {
-//            c.rollLeft(c0);
-//        }
-//        else if (this.isAboveRight(c0)) {
-//            System.out.println(id);
-//            this.rollRight(c0);
-//        } else if (this.isBelowLeft(c0)) {
-//            System.out.println(c0.id);
-//            c0.rollRight(this);
-//        } else if (this.isBelowRight(c0)) {
-//            System.out.println(c0.id);
-//            c0.rollLeft(this);
-//        }
-    }
-
-    // EFFECTS: returns true if given data overlaps with any circle
-    private boolean checkOverlap(int xpos, int ypos, int diam) {
-        for (Circle c : circles) {
-            if (c.overlaps(xpos, ypos, diam)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     // MODIFIES: this
@@ -145,7 +127,7 @@ public class Game implements Writeable {
         int xpos = rand.nextInt(width - diam);
         int ypos = rand.nextInt(height - diam);
 
-        while (checkOverlap(xpos, ypos, diam)) {
+        while (overlaps(xpos, ypos, diam)) {
             diam = rand.nextInt(201) + 50;
             xpos = rand.nextInt(width - diam);
             ypos = rand.nextInt(height - diam);
@@ -216,8 +198,19 @@ public class Game implements Writeable {
         circles = new ArrayList<>();
     }
 
+    // EFFECTS: returns true if given data overlaps with any circle
+    public boolean overlaps(int xpos, int ypos, int diam) {
+        for (Circle c : circles) {
+            if (c.overlaps(xpos, ypos, diam)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // MODIFIES: this
-    // EFFECTS: if circle under given mouse position, returns it,
+    // EFFECTS: if there is a circle under given mouse position returns it,
     //          otherwise returns null
     public Circle overlaps(Point mouseCurr) {
         for (Circle c : circles) {
@@ -278,6 +271,16 @@ public class Game implements Writeable {
         return jsonArr;
     }
 
+    // REQUIRES: circles contains circleDragged
+    public void setCircleDragged(Circle circleDragged) {
+        this.circleDragged = circleDragged;
+    }
+
+    public void setDimension(int width, int height) {
+        this.width = width;
+        this.height = height;
+    }
+
     public ArrayList<Circle> getCircles() {
         return circles;
     }
@@ -290,21 +293,11 @@ public class Game implements Writeable {
         return id;
     }
 
-    public void setDimension(int width, int height) {
-        this.width = width;
-        this.height = height;
-    }
-
     public int getWidth() {
         return width;
     }
 
     public int getHeight() {
         return height;
-    }
-
-    // REQUIRES: circles contains circleDragged
-    public void setCircleDragged(Circle circleDragged) {
-        this.circleDragged = circleDragged;
     }
 }

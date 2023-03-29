@@ -3,17 +3,17 @@ package ui;
 import model.Circle;
 import model.Game;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Scanner;
 
+// Handles all user interactions for SandboxPanel
 public class ActionHandler {
 
     private boolean mousePressed;
-    private boolean mouseOnCircle;
+    private boolean mouseOverCircle;
     private Point mousePos;
     private Point mouseDragInit;
     private Point mouseDragCurr;
@@ -23,6 +23,8 @@ public class ActionHandler {
     private SandboxPanel panel;
     private Game game;
 
+    // REQUIRES: panel.game == game
+    // EFFECTS: initalizes new action handler for given panel and game
     public ActionHandler(SandboxPanel panel, Game game) {
         panel.addKeyListener(panel);
         panel.addMouseListener(panel);
@@ -32,10 +34,12 @@ public class ActionHandler {
         this.panel = panel;
         this.game = game;
 
-        mouseOnCircle = false;
+        mouseOverCircle = false;
         mousePressed = false;
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes all listeners from panel
     public void removeAllListeners() {
         panel.removeKeyListener(panel);
         panel.removeMouseListener(panel);
@@ -62,17 +66,7 @@ public class ActionHandler {
             panel.loadGame();
         } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             panel.togglePause();
-        } else if (e.getKeyCode() == KeyEvent.VK_T) {
-            game.rollOff();
-
-//            game.addCircle(new Point(1000, 500), 0, 0, 200);
-//            game.addCircle(new Point(2000, 750), -15, 0, 250);
-//
-//            game.addCircle(new Point(250, 100), 0, 15, 250);
-//            game.addCircle(new Point(800, 750), -5, -5, 250);
-        }
-
-        if (!panel.isRunning() && e.getKeyCode() == KeyEvent.VK_RIGHT) {
+        } else if (!panel.isRunning() && e.getKeyCode() == KeyEvent.VK_RIGHT) {
             game.tick();
         } else if (!panel.isRunning() && e.getKeyCode() == KeyEvent.VK_LEFT) {
             game.untick();
@@ -83,9 +77,14 @@ public class ActionHandler {
     // EFFECTS: handles mouse dragged event, sets variables, and if mouse over circle
     //          simulates "dragging" circle
     public void mouseDragged(MouseEvent e) {
-        mouseDragCurr = e.getPoint();
+        Point mouseDragCurrTemp = e.getPoint();
 
-        if (mouseOnCircle) {
+        int diam = (mouseDragCurrTemp.y - mouseDragInit.y) * 2;
+        if (!game.overlaps(mouseDragInit.x - diam / 2, mouseDragInit.y - diam / 2, diam)) {
+            mouseDragCurr = mouseDragCurrTemp;
+        }
+
+        if (mouseOverCircle) {
             game.moveCircle(mouseDragCurr);
         }
     }
@@ -94,12 +93,6 @@ public class ActionHandler {
     // EFFECTS: sets current position of mouse
     public void mouseMoved(MouseEvent e) {
         mousePos = e.getPoint();
-
-//        Circle c = game.overlaps(mousePos);
-//        if (c != null) {
-//            System.out.print("c.getXvel(): " + c.getXvel());
-//            System.out.println("  c.getYvel(): " + c.getYvel());
-//        }
     }
 
     // MODIFIES: this
@@ -107,36 +100,45 @@ public class ActionHandler {
     //          to add new circle
     public void mouseClicked(MouseEvent e) {
         if (e.getClickCount() == 2) {
-            if (mouseOnCircle) {
+            if (mouseOverCircle) {
                 return;
             }
 
-            int[] output = new int[3];
             do {
                 String result = panel.getJOptionPane(e);
-
-                if (result == null) {
+                if (!handleJOptionPane(result, e.getPoint())) {
                     break;
-                }
-
-                if (!result.matches("[^0-9]*")) {
-                    Scanner sc = new Scanner(result).useDelimiter("[^0-9^-]+");
-
-                    int i;
-                    for (i = 0; i < 3; i++) {
-                        if (!sc.hasNextInt()) {
-                            break;
-                        }
-                        output[i] = sc.nextInt();
-                    }
-
-                    if (i == 3) {
-                        game.addCircle(e.getPoint(), output[0], output[1], output[2]);
-                        break;
-                    }
                 }
             } while (true);
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: processes and handles joptionpane input
+    private boolean handleJOptionPane(String result, Point p) {
+        if (result == null || result.equals("")) {
+            return false;
+        }
+
+        int[] output = new int[3];
+        if (!result.matches("[^0-9]*")) {
+            Scanner sc = new Scanner(result).useDelimiter("[^0-9^-]+");
+
+            int i;
+            for (i = 0; i < 3; i++) {
+                if (!sc.hasNextInt()) {
+                    break;
+                }
+                output[i] = sc.nextInt();
+            }
+
+            if (i == 3) {
+                game.addCircle(p, output[0], output[1], output[2]);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // MODIFIES: this
@@ -155,7 +157,7 @@ public class ActionHandler {
             game.setCircleDragged(dragged);
 
             mouseDragTime = System.currentTimeMillis();
-            mouseOnCircle = true;
+            mouseOverCircle = true;
         } else {
             game.setCircleDragged(null);
 
@@ -169,15 +171,13 @@ public class ActionHandler {
     public void mouseReleased(MouseEvent e) {
         if (mousePressed && mouseDragInit != null && mouseDragCurr != null && mouseDragInit.y < mouseDragCurr.y) {
             game.addCircle(mouseDragInit, mouseDragCurr, mouseColor);
-            // TODO make sure new circle can't be dragged into existing circle
         }
 
-        if (mouseOnCircle && mouseDragInit != null && mouseDragCurr != null) {
-//            double t = (System.currentTimeMillis() - mouseDragTime) / 1000f;
+        if (mouseOverCircle && mouseDragInit != null && mouseDragCurr != null) {
             game.releaseCircle(mouseDragInit, mouseDragCurr, (System.currentTimeMillis() - mouseDragTime));
-            mouseOnCircle = false;
-        } else if (mouseOnCircle && mouseDragInit != null) {
-            mouseOnCircle = false;
+            mouseOverCircle = false;
+        } else if (mouseOverCircle && mouseDragInit != null) {
+            mouseOverCircle = false;
             game.releaseCircle();
         }
 
