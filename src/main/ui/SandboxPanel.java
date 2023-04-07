@@ -3,6 +3,7 @@ package ui;
 import model.Circle;
 import model.Game;
 import org.json.JSONObject;
+import persistence.Writeable;
 
 import javax.swing.*;
 import java.awt.*;

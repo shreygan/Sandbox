@@ -2,7 +2,7 @@ package model;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import ui.Writeable;
+import persistence.Writeable;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -136,6 +136,7 @@ public class Game implements Writeable {
         circles.add(new Circle(xpos, ypos, rand.nextInt(21) - 10, rand.nextInt(21) - 10,
                 diam, new Color((int) (Math.random() * 0x1000000)), id, true));
 
+        EventLog.getInstance().logEvent(new Event("circle added v1 (id: " + id + ")"));
         id++;
     }
 
@@ -145,6 +146,7 @@ public class Game implements Writeable {
     public void addCircle(Circle c) {
         circles.add(c);
 
+        EventLog.getInstance().logEvent(new Event("circle added v2 (id: " + id + ")"));
         id++;
     }
 
@@ -155,6 +157,7 @@ public class Game implements Writeable {
         circles.add(new Circle(mouseCurr.x, mouseCurr.y, xvel, yvel, rad,
                 new Color((int) (Math.random() * 0x1000000)), id, true));
 
+        EventLog.getInstance().logEvent(new Event("circle added v3 (id: " + id + ")"));
         id++;
     }
 
@@ -167,6 +170,7 @@ public class Game implements Writeable {
         circles.add(new Circle(mouseInit.x - rad / 2, mouseInit.y - rad / 2,
                 rand.nextInt(21) - 10, rand.nextInt(21) - 10, rad, c, id, true));
 
+        EventLog.getInstance().logEvent(new Event("circle added v4 (id: " + id + ")"));
         id++;
     }
 
@@ -176,12 +180,16 @@ public class Game implements Writeable {
         for (Circle c : circles) {
             c.setVel(rand.nextInt(101) - 50, rand.nextInt(101) - 50);
         }
+
+        EventLog.getInstance().logEvent(new Event("relaunched circles"));
     }
 
     // MODIFIES: this
     // EFFECTS: deletes all circles from sandbox
     public void deleteCircles() {
         circles = new ArrayList<>();
+
+        EventLog.getInstance().logEvent(new Event("deleted all circles"));
     }
 
     // MODIFIES: this
@@ -190,12 +198,15 @@ public class Game implements Writeable {
     public void deleteCircles(Point mousePos) {
         for (int i = circles.size() - 1; i >= 0; i--) {
             if (circles.get(i).overlaps(mousePos)) {
+                EventLog.getInstance().logEvent(new Event("deleted one circle (id: "
+                        + circles.get(i).getId() + ")"));
                 circles.remove(circles.get(i));
                 return;
             }
         }
 
         circles = new ArrayList<>();
+        EventLog.getInstance().logEvent(new Event("deleted all circles"));
     }
 
     // EFFECTS: returns true if given data overlaps with any circle

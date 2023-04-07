@@ -1,4 +1,4 @@
-package ui;
+package persistence;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

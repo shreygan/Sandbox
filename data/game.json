@@ -1,90 +1,9 @@
 {
     "running": true,
     "game": {
-        "width": 2560,
-        "circles": [
-            {
-                "ypos": 1174,
-                "xpos": 1031,
-                "color": -8019111,
-                "id": 1,
-                "accelerating": true,
-                "yvel": 2,
-                "xvel": -2,
-                "diam": 229
-            },
-            {
-                "ypos": 1349,
-                "xpos": 18,
-                "color": -14179248,
-                "id": 2,
-                "accelerating": true,
-                "yvel": 0,
-                "xvel": 0,
-                "diam": 63
-            },
-            {
-                "ypos": 1132,
-                "xpos": 1265,
-                "color": -10788799,
-                "id": 3,
-                "accelerating": true,
-                "yvel": 5,
-                "xvel": -1,
-                "diam": 202
-            },
-            {
-                "ypos": 1182,
-                "xpos": 706,
-                "color": -14054830,
-                "id": 4,
-                "accelerating": true,
-                "yvel": 0,
-                "xvel": 0,
-                "diam": 230
-            },
-            {
-                "ypos": 1236,
-                "xpos": 463,
-                "color": -2869800,
-                "id": 5,
-                "accelerating": true,
-                "yvel": 0,
-                "xvel": 0,
-                "diam": 176
-            },
-            {
-                "ypos": 1286,
-                "xpos": 297,
-                "color": -9301690,
-                "id": 6,
-                "accelerating": true,
-                "yvel": 1,
-                "xvel": 0,
-                "diam": 126
-            },
-            {
-                "ypos": 1301,
-                "xpos": 1876,
-                "color": -15824123,
-                "id": 7,
-                "accelerating": true,
-                "yvel": 0,
-                "xvel": 0,
-                "diam": 111
-            },
-            {
-                "ypos": 1217,
-                "xpos": 100,
-                "color": -1998378,
-                "id": 8,
-                "accelerating": true,
-                "yvel": 0,
-                "xvel": 0,
-                "diam": 195
-            }
-        ],
-        "id": 25,
-        "height": 1412
+        "width": 1440,
+        "circles": [],
+        "id": 23,
+        "height": 900
     }
 }

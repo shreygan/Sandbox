@@ -63,3 +63,23 @@ with the program.
 - You can load the state of my application by
   - pressing the load button on the jpanel
   - pressing l
+
+### Phase 4: Task 2
+
+Thu Apr 06 20:13:08 PDT 2023
+circle added v1 (id: 1)
+
+Thu Apr 06 20:13:09 PDT 2023
+circle added v1 (id: 2)
+
+Thu Apr 06 20:13:10 PDT 2023
+relaunched circles
+
+Thu Apr 06 20:13:13 PDT 2023
+deleted one circle (id: 1)
+
+Thu Apr 06 20:13:13 PDT 2023
+circle added v1 (id: 3)
+
+Thu Apr 06 20:13:16 PDT 2023
+deleted all circles
