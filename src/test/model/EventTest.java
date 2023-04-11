@@ -43,15 +43,16 @@ public class EventTest {
     @Test
     void testEqualsAndHash() {
         Event e2 = new Event("Sensor open at door");
-        Event e3 = new Event("test event");
+        Event e3 = new Event("Sensor open at door");
+        Event e4 = new Event("test event");
 
-        assertEquals(e, e2);
-        assertEquals(e.hashCode(), e2.hashCode());
+        assertEquals(e2, e3);
+        assertEquals(e2.hashCode(), e3.hashCode());
 
         assertNotEquals(e, null);
         assertNotEquals(e, "test");
 
-        assertNotEquals(e, e3);
-        assertNotEquals(e.hashCode(), e3.hashCode());
+        assertNotEquals(e, e4);
+        assertNotEquals(e.hashCode(), e4.hashCode());
     }
 }

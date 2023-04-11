@@ -1,6 +1,5 @@
 package ui;
 
-import model.EventLog;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -39,10 +38,7 @@ public class Sandbox extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                for (model.Event event : EventLog.getInstance()) {
-                    System.out.println(event);
-                    System.out.println();
-                }
+                panel.printLogs();
             }
         });
 

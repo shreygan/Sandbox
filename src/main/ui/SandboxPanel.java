@@ -58,6 +58,11 @@ public class SandboxPanel extends JPanel
         running = !running;
     }
 
+    // EFFECTS: prints all event logs
+    public void printLogs() {
+        System.out.println(game.printLogs());
+    }
+
     // MODIFIES: this
     // EFFECTS: paints this to JPanel
     @Override

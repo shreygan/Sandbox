@@ -83,3 +83,22 @@ circle added v1 (id: 3)
 
 Thu Apr 06 20:13:16 PDT 2023
 deleted all circles
+
+### Phase 4: Task 3
+
+One aspect of refactoring that I think would improve my project design is further modifying the SandboxPanel, 
+GraphicsHandler, and ActionHandler classes. Intitially the functionality of all three classes was just in SandboxPanel,
+however I refactored the GraphicsHandler and ActionHandler classes out in order to increase cohesion. That did 
+work as now SandboxPanel handles aspects only related to the game iteself, and the other two classes perform the 
+tasks they are named for. However, that increased the coupling of these classes quite a bit. I think that the bidirectional 
+relationship between SandboxPanel and the two classes is alright, however there are dependencies between ActionHandler 
+and GraphicsHandler. One of them is the paint method in GraphicsHandler using and calling aspects of ActionHandler. 
+To solve this, I think the best way would be to push the paint method, and any others that utilize both classes, 
+up to the SandboxPanel class.
+
+Another aspect of refactoring I think could be benefitial for my project is modifying the methods in the Circle class.
+Currently, for the tick forward and backword functionality, there are two seperate methods for each difference. For 
+example there is tickPos(), untickPos(), tickXVel(), untickXVel(), and so on. However, the differences in between the  
+tick and untick classes is often just whether a value is added or subtracted. One refactoring that could condense this 
+code down is each pairing of methods having a boolean parameter that determines if it should tick or untick (add or 
+subtract). Overall, this would decrease the use of code that is mostly duplicated, and increase readability.

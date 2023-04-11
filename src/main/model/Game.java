@@ -34,6 +34,17 @@ public class Game implements Writeable {
         id = 1;
     }
 
+    // EFFECTS: returns String of all events loged by this game
+    public String printLogs() {
+        StringBuilder sb = new StringBuilder();
+        for (Event event : EventLog.getInstance()) {
+            sb.append(event);
+            sb.append("\n\n");
+        }
+
+        return sb.toString();
+    }
+
     // MODIFIES: this
     // EFFECTS: updates positions of all circles in sandbox
     public void tick() {

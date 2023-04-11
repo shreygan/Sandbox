@@ -3,6 +3,7 @@ package model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -50,5 +51,18 @@ public class EventLogTest {
         assertTrue(itr.hasNext());   // After log is cleared, the clear log event is added
         assertEquals("Event log cleared.", itr.next().getDescription());
         assertFalse(itr.hasNext());
+    }
+
+    @Test
+    void testPrintLogs() {
+        Game g = new Game(new Dimension(1000, 1000));
+
+        StringBuilder sb = new StringBuilder();
+        for (Event event : EventLog.getInstance()) {
+            sb.append(event);
+            sb.append("\n\n");
+        }
+
+        assertEquals(sb.toString(), g.printLogs());
     }
 }
