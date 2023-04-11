@@ -98,7 +98,7 @@ up to the SandboxPanel class.
 
 Another aspect of refactoring I think could be benefitial for my project is modifying the methods in the Circle class.
 Currently, for the tick forward and backword functionality, there are two seperate methods for each difference. For 
-example there is tickPos(), untickPos(), tickXVel(), untickXVel(), and so on. However, the differences in between the  
-tick and untick classes is often just whether a value is added or subtracted. One refactoring that could condense this 
+example there is tickPos(), untickPos(), tickXVel(), untickXVel(), and so on. However, the differences in between the tick 
+and untick classes is often just whether a value is added or subtracted. One refactoring that could condense this 
 code down is each pairing of methods having a boolean parameter that determines if it should tick or untick (add or 
 subtract). Overall, this would decrease the use of code that is mostly duplicated, and increase readability.
