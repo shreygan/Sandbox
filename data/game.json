@@ -1,9 +1,40 @@
 {
-    "running": true,
+    "running": false,
     "game": {
         "width": 1440,
-        "circles": [],
-        "id": 23,
-        "height": 900
+        "circles": [
+            {
+                "ypos": 682,
+                "xpos": 1075,
+                "color": -2892551,
+                "id": 130,
+                "accelerating": true,
+                "yvel": -1,
+                "xvel": 0,
+                "diam": 100
+            },
+            {
+                "ypos": 647,
+                "xpos": 49,
+                "color": -9332258,
+                "id": 131,
+                "accelerating": true,
+                "yvel": -8,
+                "xvel": 7,
+                "diam": 126
+            },
+            {
+                "ypos": 562,
+                "xpos": 343,
+                "color": -15321151,
+                "id": 132,
+                "accelerating": true,
+                "yvel": 19,
+                "xvel": 6,
+                "diam": 194
+            }
+        ],
+        "id": 133,
+        "height": 872
     }
 }
