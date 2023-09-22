@@ -1,8 +1,4 @@
-<div align="center">
-    <h1>
-        Sandbox
-    </h1>
-</div>
+## Sandbox
 
 <div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
     <div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
@@ -13,18 +9,59 @@
 
 A 2d sandbox environment in Java, tested using JUnit.
 
+
+
+## Functionality
+
+<details><summary> Add Items</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/add.gif">
+</div>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/add2.gif">
+</div>
+</details>
+
+<details><summary> Delete Items</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/delete.gif">
+</div>
+</details>
+
+<details><summary> Launch Items</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/launch.gif">
+</div>
+</details>
+
+<details><summary> Throw Items</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/throw.gif">
+</div>
+</details>
+
+<details><summary> Play/Pause </summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/playpause.gif">
+</div>
+</details>
+
+<details><summary> Save/Load</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/loadsave.gif">
+</div>
+</details>
+
 ## Design
 
 <div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
     <div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
         <img src="screenshots/UML Diagram.png">
-        <p style="margin-bottom:-10px;"> Add Items 1 </p>
+        <p style="margin-bottom:-10px;"> UML Diagram </p>
     </div>
 </div>
 
-## Functionality
-
-<div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
+<!-- <div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
     <div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
         <img src="screenshots/add.gif">
         <p style="margin-bottom:-10px;"> Add Items 1 </p>
@@ -53,4 +90,4 @@ A 2d sandbox environment in Java, tested using JUnit.
         <img src="screenshots/loadsave.gif">
         <p style="margin-bottom:-10px;"> Save/Load </p>
     </div>
-</div>
+</div> -->
