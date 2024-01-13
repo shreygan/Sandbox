@@ -58,12 +58,12 @@ A 2d sandbox environment in Java, tested using JUnit.
 
 ## Design
 
-<div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
-    <div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
-        <img src="screenshots/UML Diagram.png">
-        <p style="margin-bottom:-10px;"> UML Diagram </p>
-    </div>
+<details><summary>UML Diagram</summary>
+<div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
+    <img src="screenshots/UML Diagram.png">
 </div>
+</details>
+
 
 <!-- <div style="overflow-x:scroll; white-space:nowrap; text-align:center;">
     <div style="display:inline-block; margin-right:10px; margin-left:10px; margin-top:10px;">
